@@ -71,6 +71,14 @@ class SerialPortMon(QMainWindow):
             """Handle received messages and display the time taken."""
             self.log_message("Received", message.strip(), f"{time_taken} ms")
 
+    def change_font_size(self, size):
+        """Helper function to change the font size."""
+        self.current_font_size = size
+        for widget in self.findChildren((QTextEdit, QLineEdit, QComboBox, QLabel)):
+            font = widget.font()  # Get the current font of the widget
+            font.setPointSize(size)  # Change only the font size
+            widget.setFont(font)  # Set the modified font back to the widget
+
     def send_generated_message(self):
         """Send the generated message directly and log it."""
         if self.serial_port and self.serial_port.is_open:
@@ -102,24 +110,6 @@ class SerialPortMon(QMainWindow):
     # Replace clear_log method to clear the table
     def clear_log(self):
         self.log_table.setRowCount(0)
-
-    def change_font_size(self, size):
-        self.current_font_size = size
-        for widget in self.findChildren((QTextEdit, QLineEdit, QComboBox, QLabel)):
-            font = widget.font()  # Get the current font of the widget
-            font.setPointSize(size)  # Change only the font size
-            widget.setFont(font)  # Set the modified font back to the widget
-
-    def zoom_in(self):
-        if self.current_font_size < 20:
-            self.change_font_size(self.current_font_size + 2)
-
-    def zoom_out(self):
-        if self.current_font_size > 10:
-            self.change_font_size(self.current_font_size - 2)
-
-    def zoom_default(self):
-        self.change_font_size(12)
 
     def get_serial_ports(self):
         return self.connection_manager.get_serial_ports()

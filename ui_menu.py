@@ -12,15 +12,15 @@ class Menu:
         view_menu = menubar.addMenu("View")
 
         zoom_in_action = QAction("Zoom In", self.parent)
-        zoom_in_action.triggered.connect(self.parent.zoom_in)
+        zoom_in_action.triggered.connect(self.zoom_in)
         view_menu.addAction(zoom_in_action)
 
         zoom_out_action = QAction("Zoom Out", self.parent)
-        zoom_out_action.triggered.connect(self.parent.zoom_out)
+        zoom_out_action.triggered.connect(self.zoom_out)
         view_menu.addAction(zoom_out_action)
 
         zoom_default_action = QAction("Default Zoom", self.parent)
-        zoom_default_action.triggered.connect(self.parent.zoom_default)
+        zoom_default_action.triggered.connect(self.zoom_default)
         view_menu.addAction(zoom_default_action)
 
         # Command menu
@@ -37,6 +37,20 @@ class Menu:
         delete_cmd_action = QAction("Delete Command", self.parent)
         delete_cmd_action.triggered.connect(self.delete_custom_command)
         command_menu.addAction(delete_cmd_action)
+
+    def zoom_in(self):
+        """Increase the font size of UI elements."""
+        if self.parent.current_font_size < 20:
+            self.parent.change_font_size(self.parent.current_font_size + 2)
+
+    def zoom_out(self):
+        """Decrease the font size of UI elements."""
+        if self.parent.current_font_size > 10:
+            self.parent.change_font_size(self.parent.current_font_size - 2)
+
+    def zoom_default(self):
+        """Reset the font size of UI elements to the default value."""
+        self.parent.change_font_size(12)
 
     def add_custom_command(self):
         if len(self.parent.custom_cmd_buttons) < 3:
