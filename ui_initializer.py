@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QTableWidget, QHeaderView, QAbstractItemView
 from PyQt5.QtCore import Qt, pyqtSlot, QModelIndex
-from ui_left_components import create_port_layout, create_input_layout
+from ui_left_components import create_port_layout, create_input_layout, create_log_table
 from ui_right_generator import create_manual_input_layout, create_len_chk_layout, create_message_display_layout, create_placeholder_widget, update_len_chk
 from ui_menu import Menu
 
@@ -23,32 +23,8 @@ class UIInitializer:
         communication_layout = QVBoxLayout()
         port_layout = create_port_layout(self.parent)
 
-        # Initialize log_table here
-        self.parent.log_table = QTableWidget()
-        self.parent.log_table.setColumnCount(3)
-        self.parent.log_table.setHorizontalHeaderLabels(["Type", "Message", "Time (ms)"])
-
-        # Set stretch factors for the columns (1:2:1 ratio)
-        header = self.parent.log_table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QHeaderView.Stretch)
-        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        header.setStretchLastSection(False)
-
-        # Allow rows to expand dynamically to fit content
-        self.parent.log_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        self.parent.log_table.verticalHeader().setDefaultAlignment(Qt.AlignCenter)  # Center numbering in vertical header
-
-        # Enable alternating row colors
-        self.parent.log_table.setAlternatingRowColors(True)
-
-        # Disable horizontal scrolling
-        self.parent.log_table.setWordWrap(True)
-        self.parent.log_table.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-        self.parent.log_table.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
-
-        # Connect the table's signal to auto-scroll to the bottom
-        self.parent.log_table.model().rowsInserted.connect(lambda: self.scroll_to_bottom())
+        # Create the log table using the function in ui_left_components.py
+        self.parent.log_table = create_log_table(self.parent)
 
         communication_layout.addWidget(port_layout)
         communication_layout.addWidget(self.parent.log_table)  # Add log_table to the layout
@@ -92,12 +68,6 @@ class UIInitializer:
         self.parent.cmd_input.textChanged.connect(lambda: update_len_chk(self.parent))
         self.parent.op_input.textChanged.connect(lambda: update_len_chk(self.parent))
         self.parent.data_input.textChanged.connect(lambda: update_len_chk(self.parent))
-
-
-    @pyqtSlot()
-    def scroll_to_bottom(self):
-        """Auto-scroll to the bottom of the table when new rows are inserted."""
-        self.parent.log_table.scrollToBottom()
 
     def update_cmd_buttons_layout(self):
         """Update the CMD buttons layout whenever changes are made."""
