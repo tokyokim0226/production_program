@@ -1,0 +1,228 @@
+/* General Styles */
+QWidget {
+    background-color: #f9fafc;
+    color: #2c3e50;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+/* QLabel Styles */
+QLabel {
+    color: #2c3e50;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* QLineEdit and QTextEdit Styles (for better visibility) */
+QLineEdit, QTextEdit {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db; 
+    border-radius: 8px;
+    padding: 6px;
+    color: #2c3e50;
+}
+
+QLineEdit:focus, QTextEdit:focus {
+    border: 1px solid #5dade2;
+}
+
+/* QPushButton Styles */
+QPushButton {
+    background-color: #e0effc; /* Lighter blue for buttons */
+    border: 1px solid #b2d4f7;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #d4e7fa;
+    border-color: #97c7f3;
+}
+
+QPushButton:pressed {
+    background-color: #97c7f3;
+    border-color: #5dade2;
+}
+
+QPushButton:checked {
+    background-color: #5dade2; 
+    border-color: #3498db;
+    color: #ffffff; 
+}
+
+/* Primary Buttons (e.g., Connect, Send) */
+QPushButton#connect_button, QPushButton#send_button {
+    background-color: #3498db;
+    color: #ffffff;
+    border: 1px solid #2980b9;
+}
+
+QPushButton#connect_button:hover, QPushButton#send_button:hover {
+    background-color: #2980b9;
+}
+
+/* Secondary Buttons (e.g., Clear Log) */
+QPushButton#clear_log_button {
+    background-color: #e0effc;
+    border: 1px solid #b2d4f7;
+    color: #2c3e50;
+}
+
+QPushButton#clear_log_button:hover {
+    background-color: #d4e7fa;
+}
+
+/* QComboBox Styles */
+QComboBox {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 6px;
+    color: #2c3e50;
+    padding-right: 25px;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 25px;
+    border-left: 1px solid #d1d5db;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    background-color: #eaf2fb;
+}
+
+QComboBox::down-arrow {
+    image: url(:/qt-project.org/styles/commonstyle/images/combobox-arrow-down.png);
+}
+
+/* Custom ScrollBar Styles */
+QScrollBar:vertical {
+    background-color: #f0f0f0;
+    width: 12px;
+    margin: 0px;
+    border-radius: 6px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #5dade2;
+    min-height: 20px;
+    border-radius: 6px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: none;
+    height: 0px;
+    subcontrol-position: none;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: #e3e9f1;
+}
+
+/* Group Box Style (for grouping elements) */
+QGroupBox {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 0 3px;
+    background-color: #f9fafc;
+}
+
+/* Menu Bar Styles */
+QMenuBar {
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+QMenuBar::item {
+    padding: 5px 10px;
+    background-color: transparent;
+    border-radius: 5px;
+}
+
+QMenuBar::item:selected {
+    background-color: #d4e7fa;  /* lighter blue on hover */
+}
+
+QMenuBar::item:pressed {
+    background-color: #b2d4f7;  /* darker blue when pressed */
+}
+
+/* Menu Styles */
+QMenu {
+    background-color: #f0f0f0;
+    border: 1px solid #d0d0d0;
+}
+
+QMenu::item {
+    padding: 5px 20px;
+    background-color: transparent;
+}
+
+QMenu::item:selected {
+    background-color: #d4e7fa;  /* lighter blue on hover */
+}
+
+QMenu::item:pressed {
+    background-color: #b2d4f7;  /* darker blue when pressed */
+}
+
+QTableWidget {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    color: #2c3e50;
+    outline:0;
+}
+
+QTableWidget::item {
+    padding: 5px;
+    gridline-color: #d1d5db; /* Clearer gridline color */
+    background-color: #ffffff; /* Default background color */
+}
+
+QTableWidget::item:alternate {
+    background-color: #f2f2f2; /* Slight grey color for alternate rows */
+}
+
+QTableWidget::item:selected {
+    background-color: #d0e7ff; /* Light blue highlight for selected cells */
+}
+
+QTableWidget::item:selected:active {
+    background-color: #b0d7ff; /* Slightly darker blue for active selected cells */
+}
+
+QTableWidget::item:selected:!active {
+    background-color: #ffffff; /* Light blue for inactive selected cells */
+}
+
+
+
+/* QTableWidget Header and Corner Styles */
+QHeaderView::section {
+    background-color: #ADD8E6;  /* Slightly darker blue */
+    color: #2c3e50;
+    font-weight: bold;
+    border: 1px solid #5dade2; /* Clearer border color */
+}
+
+QHeaderView::section:vertical {
+    text-align: center; /* Center numbering */
+}
+
+QTableCornerButton::section {
+    background-color: #ffffff;
+    border-color: #5dade2;
+    border-radius: 3px; /* Rounded corners */
+    margin: 2px; /* Ensure it looks consistent */
+}
