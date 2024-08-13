@@ -18,7 +18,7 @@ class ConnectionSettingsDialog(QDialog):
         port_layout = QHBoxLayout()
         port_label = QLabel("Select Port:")
         self.port_combo = QComboBox()
-        self.port_combo.addItems(parent.get_serial_ports())  # Populate with initial available ports
+        self.port_combo.addItems(parent.connection_manager.get_serial_ports())  # Populate with initial available ports
         port_layout.addWidget(port_label)
         port_layout.addWidget(self.port_combo)
         layout.addLayout(port_layout)
@@ -78,7 +78,7 @@ class ConnectionSettingsDialog(QDialog):
     def refresh_connections(self):
         """Refresh the list of available serial ports."""
         self.port_combo.clear()  # Clear the existing items in the ComboBox
-        self.port_combo.addItems(self.parent.get_serial_ports())  # Repopulate with the updated list of ports
+        self.port_combo.addItems(self.parent.connection_manager.get_serial_ports())  # Repopulate with the updated list of ports
 
     def get_settings(self):
         return {

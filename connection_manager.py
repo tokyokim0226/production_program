@@ -1,28 +1,26 @@
 import serial
 from PyQt5.QtWidgets import QMessageBox, QDialog
 from connection_settings_dialog import ConnectionSettingsDialog
-from serial.tools import list_ports  # Import list_ports for getting available serial ports
+from serial.tools import list_ports
 
 class ConnectionManager:
     def __init__(self, parent):
         self.parent = parent
 
     def get_serial_ports(self):
-        ports = [port.device for port in list_ports.comports()]  # Retrieve list of available serial ports
-        return ports if ports else ["No COM ports"]  # Return ports or a default message if none are found
+        ports = [port.device for port in list_ports.comports()]
+        return ports if ports else ["No COM ports"]
 
     def connect_serial(self):
         if self.parent.serial_port and self.parent.serial_port.is_open:
-            # If the serial port is already open, this function will act as 'Close'
             self.close_serial()
         else:
-            # If the serial port is not open, proceed with connecting
             dialog = ConnectionSettingsDialog(self.parent)
             result = dialog.exec_()
 
-            if result == QDialog.Accepted:  # Proceed only if the dialog was accepted
+            if result == QDialog.Accepted:
                 settings = dialog.get_settings()
-                port = settings['port']  # Get the selected port
+                port = settings['port']
                 try:
                     self.parent.serial_port = serial.Serial(
                         port,
@@ -33,7 +31,7 @@ class ConnectionManager:
                         timeout=0.1
                     )
                     self.parent.logger.log_message("Connect", f"Connected to {port}")
-                    self.parent.start_reading_thread()
+                    self.parent.communication_manager.start_reading_thread()
 
                     # Update the UI state after a successful connection
                     self.parent.connect_button.setText("Close")
@@ -45,10 +43,12 @@ class ConnectionManager:
     def close_serial(self):
         if self.parent.serial_port and self.parent.serial_port.is_open:
             port = self.parent.serial_port.port
-            self.parent.stop_reading_thread()
+            self.parent.communication_manager.stop_reading_thread()
             self.parent.serial_port.close()
             self.parent.logger.log_message("Disconnect", f"Disconnected from {port}")
             self.parent.connect_button.setText("Connect")
+        else:
+            self.parent.logger.log_message("Info", "No open serial port to disconnect.")
 
     def get_parity(self, parity_str):
         parity_dict = {

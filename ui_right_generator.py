@@ -115,8 +115,8 @@ def set_op(parent, op):
 
 def increment_id(id_input):
     current_text = id_input.text()
-    if current_text == "XXXX":
-        id_input.setText("0001")
+    if current_text == "9999":
+        id_input.setText("0000")
     else:
         try:
             current_value = int(current_text)
@@ -127,8 +127,8 @@ def increment_id(id_input):
 
 def decrement_id(id_input):
     current_text = id_input.text()
-    if current_text == "XXXX":
-        id_input.setText("0000")
+    if current_text == "0000":
+        id_input.setText("9999")
     else:
         try:
             current_value = int(current_text)
