@@ -53,23 +53,10 @@ class SerialPortMon(QMainWindow):
         self.log_table.insertRow(row_position)
 
         # Create QTableWidgetItem for each cell and disable editing
-        type_item = QTableWidgetItem(message_type)
-        type_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable)
-        
-        message_item = QTableWidgetItem(message)
-        message_item.setFlags(message_item.flags() & ~Qt.ItemIsEditable)
-        
-        time_item = QTableWidgetItem(time_taken)
-        time_item.setFlags(time_item.flags() & ~Qt.ItemIsEditable)
-
-        # Add items to the table
-        self.log_table.setItem(row_position, 0, type_item)
-        self.log_table.setItem(row_position, 1, message_item)
-        self.log_table.setItem(row_position, 2, time_item)
-
-        def handle_received_message_with_time(self, message, time_taken):
-            """Handle received messages and display the time taken."""
-            self.log_message("Received", message.strip(), f"{time_taken} ms")
+        for i, text in enumerate([message_type, message, time_taken]):
+            item = QTableWidgetItem(text)
+            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            self.log_table.setItem(row_position, i, item)
 
     def change_font_size(self, size):
         """Helper function to change the font size."""
