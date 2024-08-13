@@ -32,7 +32,7 @@ class ConnectionManager:
                         stopbits=settings["stop_bits"],
                         timeout=0.1
                     )
-                    self.parent.log_message("Connect", f"Connected to {port}")
+                    self.parent.logger.log_message("Connect", f"Connected to {port}")
                     self.parent.start_reading_thread()
 
                     # Update the UI state after a successful connection
@@ -47,7 +47,7 @@ class ConnectionManager:
             port = self.parent.serial_port.port
             self.parent.stop_reading_thread()
             self.parent.serial_port.close()
-            self.parent.log_message("Disconnect", f"Disconnected from {port}")
+            self.parent.logger.log_message("Disconnect", f"Disconnected from {port}")
             self.parent.connect_button.setText("Connect")
 
     def get_parity(self, parity_str):

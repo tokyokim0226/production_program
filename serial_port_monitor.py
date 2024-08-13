@@ -9,6 +9,7 @@ from serial_reader_worker import SerialReaderWorker
 from ui_initializer import UIInitializer
 from connection_manager import ConnectionManager
 from ui_right_generator import update_len_chk
+from logger import Logger
 
 class SerialPortMon(QMainWindow):
     def __init__(self):
@@ -35,6 +36,7 @@ class SerialPortMon(QMainWindow):
         self.connection_manager = ConnectionManager(self)
 
         self.initUI()
+        self.logger = Logger(self.log_table)  # Initialize Logger with the log_table
         self.change_font_size(12)
 
     def initUI(self):
@@ -45,18 +47,6 @@ class SerialPortMon(QMainWindow):
         self.op_input.textChanged.connect(lambda: update_len_chk(self))
         self.id_input.textChanged.connect(lambda: update_len_chk(self))
         self.data_input.textChanged.connect(lambda: update_len_chk(self))
-
-
-    def log_message(self, message_type, message, time_taken=""):
-        """Log a message in the table."""
-        row_position = self.log_table.rowCount()
-        self.log_table.insertRow(row_position)
-
-        # Create QTableWidgetItem for each cell and disable editing
-        for i, text in enumerate([message_type, message, time_taken]):
-            item = QTableWidgetItem(text)
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-            self.log_table.setItem(row_position, i, item)
 
     def change_font_size(self, size):
         """Helper function to change the font size."""
@@ -77,26 +67,22 @@ class SerialPortMon(QMainWindow):
                     self.serial_port.write(message.encode('utf-8'))
                     end_time = QDateTime.currentDateTime()
                     elapsed_time = start_time.msecsTo(end_time)
-                    self.log_message("Sent", message.strip(), f"{elapsed_time} ms")
+                    self.logger.log_message("Sent", message.strip(), f"{elapsed_time} ms")
                 else:
                     QMessageBox.warning(self, "Invalid Input", "Message format is invalid")
             except Exception as e:
-                self.log_message("Error", str(e))
+                self.logger.log_message("Error", str(e))
         else:
             QMessageBox.warning(self, "Not Connected", "Please select a COM port.")
 
     def connect_serial(self):
         if not self.serial_port or not self.serial_port.is_open:
             self.connection_manager.connect_serial()
-            if self.serial_port:
-                self.log_message("Connect", f"Connected to {self.serial_port.port}", "")
         else:
             self.connection_manager.close_serial()
-            self.log_message("Disconnect", f"Disconnected from {self.serial_port.port}", "")
 
-    # Replace clear_log method to clear the table
     def clear_log(self):
-        self.log_table.setRowCount(0)
+        self.logger.clear_log()  # Use Logger
 
     def get_serial_ports(self):
         return self.connection_manager.get_serial_ports()
@@ -118,7 +104,7 @@ class SerialPortMon(QMainWindow):
 
     def handle_received_message_with_time(self, message, time_taken):
         """Handle received messages and display the time taken."""
-        self.log_message("Received", message.strip(), f"{time_taken} ms")
+        self.logger.log_message("Received", message.strip(), f"{time_taken} ms")
 
     def reset_buffer_timer(self):
         """Reset or start the buffer timer when new data is received."""
@@ -152,12 +138,12 @@ class SerialPortMon(QMainWindow):
                     self.serial_port.write(message.encode('utf-8'))
                     end_time = QDateTime.currentDateTime()
                     elapsed_time = start_time.msecsTo(end_time)
-                    self.log_message("Sent", message.strip(), f"{elapsed_time} ms")  # Use log_message instead of text_display
+                    self.logger.log_message("Sent", message.strip(), f"{elapsed_time} ms")  # Use log_message instead of text_display
                 else:
                     QMessageBox.warning(self, "Invalid Input", "Message format is invalid")
 
             except Exception as e:
-                self.log_message("Error", str(e))  # Log the error in the log table
+                self.logger.log_message("Error", str(e))  # Log the error in the log table
         else:
             QMessageBox.warning(self, "Not Connected", "Please select a COM port.")
 
