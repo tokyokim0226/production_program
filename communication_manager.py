@@ -49,11 +49,12 @@ class CommunicationManager:
             return
 
         try:
-            start_time = QDateTime.currentDateTime()
-            self.parent.serial_port.write(message.encode('utf-8'))
-            end_time = QDateTime.currentDateTime()
-            elapsed_time = start_time.msecsTo(end_time)
-            self.logger.log_message("Sent", message.strip(), f"{elapsed_time} ms")
+            if message:   #Make sure that message is only being sent when there is content in the message box
+                start_time = QDateTime.currentDateTime()
+                self.parent.serial_port.write(message.encode('utf-8'))
+                end_time = QDateTime.currentDateTime()
+                elapsed_time = start_time.msecsTo(end_time)
+                self.logger.log_message("Sent", message.strip(), f"{elapsed_time} ms")
         except Exception as e:
             self.logger.log_message("Error", str(e))
 
