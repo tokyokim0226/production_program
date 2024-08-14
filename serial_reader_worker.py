@@ -1,5 +1,5 @@
 import serial
-from PyQt5.QtCore import QObject, pyqtSignal, QElapsedTimer
+from PyQt5.QtCore import QObject, pyqtSignal, QDateTime, QElapsedTimer
 from protocol_handler import ProtocolHandler
 
 class SerialReaderWorker(QObject):
@@ -14,34 +14,27 @@ class SerialReaderWorker(QObject):
         self.running = True
         self.received_buffer = ''
         self.protocol_handler = ProtocolHandler()  # Initialize without parent
-        self.elapsed_timer = None  # Initialize timer as None
+        self.elapsed_timer = QElapsedTimer()  # Timer to measure elapsed time
 
     def run(self):
         while self.running and self.serial_port and self.serial_port.is_open:
             try:
                 data = self.serial_port.read_all()
                 if data:
-                    if self.elapsed_timer is None:  # Start the timer if not already running
-                        self.elapsed_timer = QElapsedTimer()
+                    if not self.elapsed_timer.isValid():  # Start the timer when data is first received
                         self.elapsed_timer.start()
 
                     self.received_buffer += data.decode('utf-8', errors='ignore')
+                    self.data_received.emit()  # Emit the signal to reset/start the buffer timer
 
-                    # Process buffer if we have a complete message ending with ETX
-                    if self.protocol_handler.ETX in self.received_buffer:
-                        lines = self.received_buffer.split(self.protocol_handler.ETX)
-                        for line in lines[:-1]:  # Process all complete messages
-                            if line.strip():  # Ensure we don't process empty lines
-                                full_message = f"{line}{self.protocol_handler.ETX}"
-                                elapsed_time = self.elapsed_timer.elapsed() if self.elapsed_timer else 0
-                                self.message_received.emit(full_message, elapsed_time)
-                        self.received_buffer = lines[-1]  # Keep the last partial message in the buffer
-
-                        # Reset the timer if the last part of the buffer is empty after splitting
-                        if not self.received_buffer.strip():
-                            self.elapsed_timer = None
-
-                    self.data_received.emit()  # Reset/start the buffer timer
+                    # Process buffer and emit each line separately if it ends with ETX
+                    lines = self.received_buffer.split(self.protocol_handler.ETX)
+                    self.received_buffer = lines.pop()  # Keep the last partial message in the buffer
+                    for line in lines:
+                        full_message = f"{line}{self.protocol_handler.ETX}"
+                        elapsed_time = self.elapsed_timer.elapsed()
+                        self.message_received.emit(full_message, elapsed_time)  # Emit each full message
+                        self.elapsed_timer.invalidate()  # Invalidate the timer after use
 
             except Exception as e:
                 self.error_occurred.emit(str(e))
@@ -50,9 +43,8 @@ class SerialReaderWorker(QObject):
 
     def flush_buffer(self):
         """Flush the buffer and print its content if no ETX character is found."""
-        if self.received_buffer and not self.received_buffer.endswith(self.protocol_handler.ETX):
-            elapsed_time = self.elapsed_timer.elapsed() if self.elapsed_timer else 0
-            if self.received_buffer.strip():  # Ensure we only log non-empty buffers
-                self.message_received.emit(self.received_buffer.strip(), elapsed_time)
+        if self.received_buffer:
+            elapsed_time = self.elapsed_timer.elapsed()  # Get the elapsed time
+            self.message_received.emit(self.received_buffer.strip(), elapsed_time)  # Emit the current buffer content
             self.received_buffer = ''  # Clear the buffer
-            self.elapsed_timer = None  # Reset the timer after flushing
+            self.elapsed_timer.invalidate()  # Invalidate the timer after use
