@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QTableWidget, QHeaderView, QAbstractItemView
 from PyQt5.QtCore import Qt, pyqtSlot, QModelIndex
-from ui_left_components import create_port_and_log_layout, create_input_layout, create_log_table
+from ui_left_components import create_connect_and_clearlog_layout, create_input_layout, create_log_table
 from ui_right_generator import create_manual_input_layout, create_len_chk_layout, create_message_display_layout, create_placeholder_widget, update_len_chk
 from ui_menu import Menu
 
@@ -23,12 +23,12 @@ class UIInitializer:
         communication_layout = QVBoxLayout()
 
         # Create the port and log button layout
-        port_and_log_widget = create_port_and_log_layout(self.parent)
+        connect_and_clearlog_widget = create_connect_and_clearlog_layout(self.parent)
 
         # Create the log table
         self.parent.log_table = create_log_table(self.parent)
 
-        communication_layout.addWidget(port_and_log_widget)  # Add the combined button layout
+        communication_layout.addWidget(connect_and_clearlog_widget)  # Add the combined button layout
         communication_layout.addWidget(self.parent.log_table)  # Add the log table
 
         input_layout = create_input_layout(self.parent)

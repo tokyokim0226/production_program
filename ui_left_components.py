@@ -3,9 +3,9 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QTableWidget, QHeaderView,
 from PyQt5.QtCore import Qt, pyqtSlot
 
 
-def create_port_and_log_layout(parent):
-    port_and_log_widget = QWidget()
-    port_and_log_layout = QHBoxLayout(port_and_log_widget)
+def create_connect_and_clearlog_layout(parent):
+    connect_and_clearlog_widget = QWidget()
+    connect_and_clearlog_layout = QHBoxLayout(connect_and_clearlog_widget)
 
     # Connect button
     parent.connect_button = QPushButton("Connect")
@@ -18,11 +18,11 @@ def create_port_and_log_layout(parent):
     clear_log_button.clicked.connect(parent.clear_log)
 
     # Add the buttons to the layout
-    port_and_log_layout.addWidget(parent.connect_button)
-    port_and_log_layout.addStretch(1)  # Add a stretch to push the Clear Log button to the right
-    port_and_log_layout.addWidget(clear_log_button)
+    connect_and_clearlog_layout.addWidget(parent.connect_button)
+    connect_and_clearlog_layout.addStretch(1)  # Add a stretch to push the Clear Log button to the right
+    connect_and_clearlog_layout.addWidget(clear_log_button)
 
-    return port_and_log_widget
+    return connect_and_clearlog_widget
 
 
 def create_log_table(parent):

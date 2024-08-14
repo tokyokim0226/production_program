@@ -1,5 +1,3 @@
-# protocol_handler.py
-
 class ProtocolHandler:
     STX = '['
     ETX = ']'
@@ -35,7 +33,7 @@ class ProtocolHandler:
         return {
             "id": id_value,
             "cmd_op_data": cmd_op_data,
-            "checksum": checksum
+            "checksum": checksum    
         }
     
     def handle_received_message(self, message):
