@@ -7,8 +7,8 @@ from ui_initializer import UIInitializer
 from connection_manager import ConnectionManager
 from communication_manager import CommunicationManager
 from logger import Logger
-from ui_right_generator import update_len_chk
-
+from ui_left_components import UILeftComponents
+from ui_right_generator import UIRightGenerator
 
 class SerialPortMon(QMainWindow):
     def __init__(self):
@@ -18,7 +18,6 @@ class SerialPortMon(QMainWindow):
         self.protocol_handler = ProtocolHandler(self)
         self.current_font_size = 12
 
-        # Initialize UI components early
         self.cmd_input = QLineEdit(self)
         self.op_input = QLineEdit(self)
         self.id_input = QLineEdit(self)
@@ -26,14 +25,18 @@ class SerialPortMon(QMainWindow):
         self.chk_value = QLineEdit(self)
 
         self.ui_initializer = UIInitializer(self)
-        self.connection_manager = ConnectionManager(self)
-        
-        # Initialize buffer timer and timeout
+        self.ui_left_components = UILeftComponents(self)
+        self.ui_right_generator = UIRightGenerator(self)
+
         self.buffer_timer = QTimer(self)
-        self.buffer_timeout = 500  # Set the buffer flush timeout to 500ms
+        self.buffer_timeout = 500
         self.buffer_timer.timeout.connect(self.flush_worker_buffer)
 
         self.initUI()
+        
+        # Initialize the ConnectionManager
+        self.connection_manager = ConnectionManager(self)  # This line was missing
+        
         self.communication_manager = CommunicationManager(self)
         self.logger = Logger(self.log_table)
         self.change_font_size(12)
@@ -41,10 +44,10 @@ class SerialPortMon(QMainWindow):
     def initUI(self):
         self.ui_initializer.setup_ui()
 
-        self.cmd_input.textChanged.connect(lambda: update_len_chk(self))
-        self.op_input.textChanged.connect(lambda: update_len_chk(self))
-        self.id_input.textChanged.connect(lambda: update_len_chk(self))
-        self.data_input.textChanged.connect(lambda: update_len_chk(self))
+        self.cmd_input.textChanged.connect(lambda: self.ui_right_generator.update_len_chk())
+        self.op_input.textChanged.connect(lambda: self.ui_right_generator.update_len_chk())
+        self.id_input.textChanged.connect(lambda: self.ui_right_generator.update_len_chk())
+        self.data_input.textChanged.connect(lambda: self.ui_right_generator.update_len_chk())
 
     def change_font_size(self, size):
         self.current_font_size = size
