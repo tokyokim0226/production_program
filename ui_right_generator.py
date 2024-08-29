@@ -47,7 +47,7 @@ class UIRightGenerator:
         layout.addLayout(id_input_layout, 1, 0, 1, 1)
 
         self.parent.cmd_button_group = QButtonGroup(self.parent)
-        self.parent.cmd_buttons = ["ADD", "COL", "POW", "CEN", "MAX", "DBG", "INF", "D_C"]
+        self.parent.cmd_buttons = ["ADD", "COL", "POW", "MIN", "MAX", "DBG", "INF", "D_C", "DET", "SEA", "MGS"]
         self.parent.custom_cmd_buttons = []
         self.parent.cmd_buttons_layout = QGridLayout()
 
