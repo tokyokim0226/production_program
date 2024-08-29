@@ -39,7 +39,7 @@ class SerialPortMon(QMainWindow):
         
         self.communication_manager = CommunicationManager(self)
         self.logger = Logger(self.log_table)
-        self.change_font_size(12)
+        # self.change_font_size(12)
 
     def initUI(self):
         self.ui_initializer.setup_ui()

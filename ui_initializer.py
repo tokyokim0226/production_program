@@ -6,6 +6,8 @@ from ui_menu import Menu
 
 from PyQt5.QtWidgets import QTabWidget
 
+from ui_right_production import UIRightProduction
+
 class UIInitializer:
     def __init__(self, parent):
         self.parent = parent
@@ -57,18 +59,9 @@ class UIInitializer:
 
         self.parent.tabs.addTab(tab1_widget, "Tab 1")
 
-        # Tab 2: New tab with a simple layout
-        tab2_widget = QWidget()
-        tab2_layout = QVBoxLayout(tab2_widget)
-        
-        tab2_text = QLabel("This is Tab 2")
-        tab2_button = QPushButton("Button in Tab 2")
-        
-        tab2_layout.addWidget(tab2_text)
-        tab2_layout.addWidget(tab2_button)
-        tab2_layout.addStretch(1)
-
-        self.parent.tabs.addTab(tab2_widget, "Tab 2")
+        # Tab 2: New tab with the described layout
+        production_ui = UIRightProduction(self.parent)
+        self.parent.tabs.addTab(production_ui, "Tab 2")
 
         # Add the QTabWidget to the main layout
         main_layout.addLayout(communication_layout, 1)
@@ -104,4 +97,3 @@ class UIInitializer:
             button.clicked.connect(lambda checked, cmd=cmd: self.parent.ui_right_generator.set_cmd(cmd))
             self.parent.cmd_button_group.addButton(button)
             self.parent.cmd_buttons_layout.addWidget(button, i // 2, i % 2)
-
