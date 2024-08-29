@@ -30,7 +30,7 @@ class UIRightGenerator:
         self.parent.id_input = QLineEdit()
         self.parent.id_input.setAlignment(Qt.AlignCenter)
         self.parent.id_input.setMaximumWidth(80)
-        self.parent.id_input.setMaxLength(4)
+        self.parent.id_input.setMaxLength(3)
 
         down_button = QPushButton("-")
         down_button.setMaximumWidth(40)
@@ -105,27 +105,27 @@ class UIRightGenerator:
 
     def increment_id(self):
         current_text = self.parent.id_input.text()
-        if current_text == "9999":
-            self.parent.id_input.setText("0000")
+        if current_text == "999":
+            self.parent.id_input.setText("000")
         else:
             try:
                 current_value = int(current_text)
-                if current_value < 9999:
-                    self.parent.id_input.setText(f"{current_value + 1:04}")
+                if current_value < 999:
+                    self.parent.id_input.setText(f"{current_value + 1:03}")
             except ValueError:
-                self.parent.id_input.setText("0001")
+                self.parent.id_input.setText("001")
 
     def decrement_id(self):
         current_text = self.parent.id_input.text()
-        if current_text == "0000":
-            self.parent.id_input.setText("9999")
+        if current_text == "000":
+            self.parent.id_input.setText("999")
         else:
             try:
                 current_value = int(current_text)
                 if current_value > 0:
-                    self.parent.id_input.setText(f"{current_value - 1:04}")
+                    self.parent.id_input.setText(f"{current_value - 1:03}")
             except ValueError:
-                self.parent.id_input.setText("0000")
+                self.parent.id_input.setText("000")
 
     def create_len_chk_layout(self):
         len_chk_layout = QHBoxLayout()

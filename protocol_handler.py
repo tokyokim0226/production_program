@@ -27,8 +27,8 @@ class ProtocolHandler:
             raise ValueError("Checksum does not match")
 
         # Parsing the content assuming the structure: IDCMDOPDATA
-        id_value = content[:4]  # Assuming ID is always 4 characters
-        cmd_op_data = content[4:]  # The rest is CMD, OP, and DATA combined
+        id_value = content[:3]  # Assuming ID is always 4 characters
+        cmd_op_data = content[3:]  # The rest is CMD, OP, and DATA combined
 
         return {
             "id": id_value,
