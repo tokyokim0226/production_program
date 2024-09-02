@@ -10,16 +10,26 @@ QWidget, QMenu, QMenuBar, QToolTip, QTabWidget, QLineEdit, QPushButton, QLabel {
     font-size: 16px;
 }
 
-/* Specific Sizes (Keep these or modify as needed in the UI files) */
-QLabel[fontSize="big"] {
-    font-size: 30px;
+/* Specific Sizes for UIRightProduction Components */
+QLineEdit#IDTextBox {
+    font-size: 30px; /* Large font size for the ID input box */
     font-weight: bold;
 }
 
-/* QLineEdit and QTextEdit Styles (for better visibility) */
+QLabel#IDLabel {
+    font-size: 40px; /* Large font size for the ID input box */
+    font-weight: bold;
+}
+
+QPushButton#IDButton {
+    font-size: 30px; /* Large font size for the increment/decrement buttons */
+    font-weight: bold;
+}
+
+/* Additional styles (unchanged) */
 QLineEdit, QTextEdit {
     background-color: #ffffff;
-    border: 1px solid #d1d5db; 
+    border: 1px solid #d1d5db;
     border-radius: 8px;
     padding: 6px;
     color: #2c3e50;

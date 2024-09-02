@@ -22,29 +22,33 @@ class UIRightProduction(QWidget):
         self.last_converted_id_textbox.setFixedWidth(150)
         self.last_converted_id_textbox.setText("000")
         self.last_converted_id_textbox.setAlignment(Qt.AlignCenter)
-        
         top_layout.addWidget(self.last_converted_label)
         top_layout.addWidget(self.last_converted_id_textbox)
         main_layout.addLayout(top_layout)
 
         # Label and textbox for "현재 지정 ID"
         current_id_label = QLabel("현재 지정 ID")
-        current_id_label.setProperty("fontSize", "big")
         current_id_label.setAlignment(Qt.AlignCenter)
+        current_id_label.setObjectName("IDLabel")
         main_layout.addWidget(current_id_label)
 
         current_id_layout = QHBoxLayout()
+
+        # Set object names for specific styling
         self.decrement_button = QPushButton("-")
         self.decrement_button.setFixedSize(50, 50)  # Larger buttons
+        self.decrement_button.setObjectName("IDButton")
+
         self.increment_button = QPushButton("+")
         self.increment_button.setFixedSize(50, 50)
+        self.increment_button.setObjectName("IDButton")
 
         self.current_id_textbox = QLineEdit()
         self.current_id_textbox.setMaxLength(3)
         self.current_id_textbox.setAlignment(Qt.AlignCenter)
         self.current_id_textbox.setValidator(QIntValidator(1, 998, self))
         self.current_id_textbox.setFixedHeight(50)  # Match the height of the buttons
-        self.current_id_textbox.setProperty("fontSize", "big")
+        self.current_id_textbox.setObjectName("IDTextBox")  # Set object name for specific styling
         self.current_id_textbox.setText("1")  # Set the default value to 1
 
         current_id_layout.addWidget(self.decrement_button)
