@@ -20,15 +20,17 @@ class UIRightProduction(QWidget):
         self.last_converted_id_textbox = QLineEdit()
         self.last_converted_id_textbox.setReadOnly(True)
         self.last_converted_id_textbox.setFixedWidth(self.width() * 0.3)  # Takes up around 30% of the tab width
+        self.last_converted_id_textbox.setFixedWidth(150)
+        self.last_converted_id_textbox.setText("000")
+        self.last_converted_id_textbox.setAlignment(Qt.AlignCenter)
         
         top_layout.addWidget(self.last_converted_label)
         top_layout.addWidget(self.last_converted_id_textbox)
-        top_layout.addStretch(1)  # Pushes the rest of the content down
         main_layout.addLayout(top_layout)
 
         # Label and textbox for "현재 지정 ID"
         current_id_label = QLabel("현재 지정 ID")
-        current_id_label.setFont(QFont("Arial", 20, QFont.Bold))  # Bigger font size
+        current_id_label.setProperty("fontSize", "big")
         current_id_label.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(current_id_label)
 
@@ -42,7 +44,7 @@ class UIRightProduction(QWidget):
         self.current_id_textbox = QLineEdit()
         self.current_id_textbox.setMaxLength(3)
         self.current_id_textbox.setAlignment(Qt.AlignCenter)
-        self.current_id_textbox.setFont(QFont("Arial", 20, QFont.Bold))  # Bigger font for the input
+        self.current_id_textbox.setProperty("fontSize", "big")
         self.current_id_textbox.setValidator(QIntValidator(1, 998, self))
 
         current_id_layout.addWidget(self.decrement_button)
@@ -53,12 +55,9 @@ class UIRightProduction(QWidget):
 
         # "Quick 바꾸기" and "Full 바꾸기" buttons next to each other
         button_layout = QHBoxLayout()
-        self.quick_button = QPushButton("Quick 바꾸기")
-        self.quick_button.setToolTip("Placeholder for Quick 바꾸기 explanation")
         self.full_button = QPushButton("Full 바꾸기")
         self.full_button.setToolTip("Placeholder for Full 바꾸기 explanation")
 
-        button_layout.addWidget(self.quick_button)
         button_layout.addWidget(self.full_button)
         main_layout.addLayout(button_layout)
 

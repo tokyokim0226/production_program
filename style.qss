@@ -3,14 +3,17 @@ QWidget {
     background-color: #f9fafc;
     color: #2c3e50;
     font-family: Arial, sans-serif;
-    font-size: 14px;
 }
 
-/* QLabel Styles */
-QLabel {
-    color: #2c3e50;
+/* Default Font Size for Unspecified Elements */
+QWidget, QMenu, QMenuBar, QToolTip, QTabWidget, QLineEdit, QPushButton {
+    font-size: 12px;
+}
+
+/* Specific Sizes (Keep these or modify as needed in the UI files) */
+QLabel[fontSize="big"] {
+    font-size: 20px;
     font-weight: bold;
-    font-size: 14px;
 }
 
 /* QLineEdit and QTextEdit Styles (for better visibility) */
