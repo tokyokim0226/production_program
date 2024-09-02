@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (
-    QMainWindow, QLineEdit, QTextEdit, QComboBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget
+    QMainWindow, QLineEdit, QTextEdit, QComboBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidget, QPushButton
 )
 from PyQt5.QtCore import QTimer
 from protocol_handler import ProtocolHandler
@@ -18,7 +18,6 @@ class SerialPortMon(QMainWindow):
         # Initialize the core attributes first
         self.serial_port = None
         self.protocol_handler = ProtocolHandler(self)
-        self.current_font_size = 12
 
         # Initialize UI components early to set up dependencies
         self.cmd_input = QLineEdit(self)
@@ -73,13 +72,6 @@ class SerialPortMon(QMainWindow):
 
         # Menu
         self.menu = UIMenu(self)
-
-    def change_font_size(self, size):
-        self.current_font_size = size
-        for widget in self.findChildren((QTextEdit, QLineEdit, QComboBox, QLabel)):
-            font = widget.font()
-            font.setPointSize(size)
-            widget.setFont(font)
 
     def connect_serial(self):
         self.connection_manager.connect_serial()

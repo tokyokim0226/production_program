@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QAction, QInputDialog, QMessageBox, QWidget, QLabel, QLineEdit, QPushButton, QTextEdit, QComboBox
+from PyQt5.QtWidgets import QAction, QInputDialog, QMessageBox, QWidget
 
 class UIMenu(QWidget):  # Inherit from QWidget directly
     def __init__(self, parent):
@@ -12,21 +12,6 @@ class UIMenu(QWidget):  # Inherit from QWidget directly
         self.create_menu()
 
     def create_menu(self):
-        # View menu
-        view_menu = self.parent.menuBar().addMenu("View")
-
-        zoom_in_action = QAction("Zoom In", self.parent)
-        zoom_in_action.triggered.connect(self.zoom_in)
-        view_menu.addAction(zoom_in_action)
-
-        zoom_out_action = QAction("Zoom Out", self.parent)
-        zoom_out_action.triggered.connect(self.zoom_out)
-        view_menu.addAction(zoom_out_action)
-
-        zoom_default_action = QAction("Default Zoom", self.parent)
-        zoom_default_action.triggered.connect(self.zoom_default)
-        view_menu.addAction(zoom_default_action)
-
         # Command menu
         command_menu = self.parent.menuBar().addMenu("Command")
 
@@ -41,36 +26,6 @@ class UIMenu(QWidget):  # Inherit from QWidget directly
         delete_cmd_action = QAction("Delete Command", self.parent)
         delete_cmd_action.triggered.connect(self.delete_custom_command)
         command_menu.addAction(delete_cmd_action)
-
-    def zoom_in(self):
-        """Increase the font size of UI elements."""
-        if self.parent.current_font_size < 20:
-            self.change_font_size(2)
-
-    def zoom_out(self):
-        """Decrease the font size of UI elements."""
-        if self.parent.current_font_size > 10:
-            self.change_font_size(-2)
-
-    def zoom_default(self):
-        """Reset the font size of UI elements to the default value."""
-        for widget in self.parent.findChildren((QTextEdit, QLineEdit, QComboBox, QLabel, QPushButton)):
-            font = widget.font()
-            font.setPointSize(12)  # Reset to default 12px
-            widget.setFont(font)
-
-    def change_font_size(self, increment):
-        """Change font size of UI elements by an increment."""
-        for widget in self.parent.findChildren((QTextEdit, QLineEdit, QComboBox, QLabel, QPushButton)):
-            font = widget.font()
-            current_size = font.pointSize()
-            new_size = current_size + increment
-            if new_size < 8:  # Setting a minimum font size
-                new_size = 8
-            elif new_size > 30:  # Setting a maximum font size
-                new_size = 30
-            font.setPointSize(new_size)
-            widget.setFont(font)
 
     def add_custom_command(self):
         if len(self.parent.custom_cmd_buttons) < 3:

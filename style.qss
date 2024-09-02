@@ -6,13 +6,13 @@ QWidget {
 }
 
 /* Default Font Size for Unspecified Elements */
-QWidget, QMenu, QMenuBar, QToolTip, QTabWidget, QLineEdit, QPushButton {
-    font-size: 12px;
+QWidget, QMenu, QMenuBar, QToolTip, QTabWidget, QLineEdit, QPushButton, QLabel {
+    font-size: 16px;
 }
 
 /* Specific Sizes (Keep these or modify as needed in the UI files) */
 QLabel[fontSize="big"] {
-    font-size: 20px;
+    font-size: 30px;
     font-weight: bold;
 }
 
@@ -185,6 +185,7 @@ QTableWidget {
     border-radius: 8px;
     color: #2c3e50;
     outline:0;
+    font-size: 12px; /* Default font size */
 }
 
 QTableWidget::item {
@@ -208,8 +209,6 @@ QTableWidget::item:selected:active {
 QTableWidget::item:selected:!active {
     background-color: #ffffff; /* Light blue for inactive selected cells */
 }
-
-
 
 /* QTableWidget Header and Corner Styles */
 QHeaderView::section {

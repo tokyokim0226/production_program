@@ -19,7 +19,6 @@ class UIRightProduction(QWidget):
         self.last_converted_label = QLabel("마지막으로 변환한 ID")
         self.last_converted_id_textbox = QLineEdit()
         self.last_converted_id_textbox.setReadOnly(True)
-        self.last_converted_id_textbox.setFixedWidth(self.width() * 0.3)  # Takes up around 30% of the tab width
         self.last_converted_id_textbox.setFixedWidth(150)
         self.last_converted_id_textbox.setText("000")
         self.last_converted_id_textbox.setAlignment(Qt.AlignCenter)
@@ -36,16 +35,17 @@ class UIRightProduction(QWidget):
 
         current_id_layout = QHBoxLayout()
         self.decrement_button = QPushButton("-")
-        self.increment_button = QPushButton("+")
-
         self.decrement_button.setFixedSize(50, 50)  # Larger buttons
+        self.increment_button = QPushButton("+")
         self.increment_button.setFixedSize(50, 50)
 
         self.current_id_textbox = QLineEdit()
         self.current_id_textbox.setMaxLength(3)
         self.current_id_textbox.setAlignment(Qt.AlignCenter)
-        self.current_id_textbox.setProperty("fontSize", "big")
         self.current_id_textbox.setValidator(QIntValidator(1, 998, self))
+        self.current_id_textbox.setFixedHeight(50)  # Match the height of the buttons
+        self.current_id_textbox.setProperty("fontSize", "big")
+        self.current_id_textbox.setText("1")  # Set the default value to 1
 
         current_id_layout.addWidget(self.decrement_button)
         current_id_layout.addWidget(self.current_id_textbox)
@@ -109,11 +109,19 @@ class UIRightProduction(QWidget):
         self.increment_button.clicked.connect(self.increment_id)
 
     def decrement_id(self):
-        current_value = int(self.current_id_textbox.text())
-        if current_value > 1:
-            self.current_id_textbox.setText(str(current_value - 1))
+        current_text = self.current_id_textbox.text()
+        if current_text == "":  # Handle empty case
+            self.current_id_textbox.setText("999")
+        else:
+            current_value = int(current_text)
+            if current_value > 1:
+                self.current_id_textbox.setText(str(current_value - 1))
 
     def increment_id(self):
-        current_value = int(self.current_id_textbox.text())
-        if current_value < 998:
-            self.current_id_textbox.setText(str(current_value + 1))
+        current_text = self.current_id_textbox.text()
+        if current_text == "":  # Handle empty case
+            self.current_id_textbox.setText("1")
+        else:
+            current_value = int(current_text)
+            if current_value < 998:
+                self.current_id_textbox.setText(str(current_value + 1))
