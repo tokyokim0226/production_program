@@ -1,13 +1,38 @@
 from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QLabel, QPushButton, 
     QButtonGroup, QLineEdit, QWidget, QTextEdit, 
-    QGridLayout, QInputDialog, QMessageBox
+    QGridLayout, QInputDialog, QMessageBox, QSizePolicy
 )
 from PyQt5.QtCore import Qt
 
-class UIRightGenerator:
+class UIRightGenerator(QWidget):
     def __init__(self, parent):
+        super().__init__(parent)
         self.parent = parent
+        self.cmd_buttons_layout = None  # Store the layout here
+        self.initUI()
+
+    def initUI(self):
+        layout = QVBoxLayout(self)
+
+        id_layout = self.create_manual_input_layout()
+        len_chk_layout = self.create_len_chk_layout()
+        message_display_layout = self.create_message_display_layout()
+
+        layout.addLayout(id_layout)
+        layout.addLayout(len_chk_layout)
+        layout.addLayout(message_display_layout)
+
+        placeholder = self.create_placeholder_widget()
+        layout.addWidget(placeholder)
+
+        self.setLayout(layout)
+
+        # Connect signals to update the generated message in real-time
+        self.parent.id_input.textChanged.connect(self.update_len_chk)
+        self.parent.data_input.textChanged.connect(self.update_len_chk)
+        self.parent.cmd_input.textChanged.connect(self.update_len_chk)
+        self.parent.op_input.textChanged.connect(self.update_len_chk)
 
     def create_manual_input_layout(self):
         layout = QGridLayout()
@@ -49,9 +74,9 @@ class UIRightGenerator:
         self.parent.cmd_button_group = QButtonGroup(self.parent)
         self.parent.cmd_buttons = ["ADD", "COL", "POW", "MIN", "MAX", "DBG", "INF", "D_C", "DET", "SEA", "MGS"]
         self.parent.custom_cmd_buttons = []
-        self.parent.cmd_buttons_layout = QGridLayout()
+        self.cmd_buttons_layout = QGridLayout()  # Store the layout here
 
-        self.update_cmd_buttons_layout(layout)
+        self.update_cmd_buttons_layout()
 
         op_button_group = QButtonGroup(self.parent)
         op_buttons = ["!", "?", "="]
@@ -69,13 +94,16 @@ class UIRightGenerator:
         self.parent.data_input.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.parent.data_input, 1, 4, 1, 1)
 
+        layout.addLayout(self.cmd_buttons_layout, 1, 1, (len(self.parent.cmd_buttons) + len(self.parent.custom_cmd_buttons)) // 2 + 1, 2)
+
         return layout
 
-    def update_cmd_buttons_layout(self, layout):
-        for i in reversed(range(self.parent.cmd_buttons_layout.count())):
-            widget = self.parent.cmd_buttons_layout.itemAt(i).widget()
+    def update_cmd_buttons_layout(self):
+        # Ensure the stored layout is used
+        for i in reversed(range(self.cmd_buttons_layout.count())):
+            widget = self.cmd_buttons_layout.itemAt(i).widget()
             if widget:
-                self.parent.cmd_buttons_layout.removeWidget(widget)
+                self.cmd_buttons_layout.removeWidget(widget)
                 widget.setParent(None)
 
         for i, cmd in enumerate(self.parent.cmd_buttons):
@@ -83,17 +111,14 @@ class UIRightGenerator:
             button.setCheckable(True)
             button.clicked.connect(lambda checked, cmd=cmd: self.set_cmd(cmd))
             self.parent.cmd_button_group.addButton(button)
-            self.parent.cmd_buttons_layout.addWidget(button, i // 2, i % 2)
+            self.cmd_buttons_layout.addWidget(button, i // 2, i % 2)
 
         for i, cmd in enumerate(self.parent.custom_cmd_buttons, len(self.parent.cmd_buttons)):
             button = QPushButton(cmd)
             button.setCheckable(True)
             button.clicked.connect(lambda checked, cmd=cmd: self.set_cmd(cmd))
-            # button.setStyleSheet("background-color: #87CEFA;")
             self.parent.cmd_button_group.addButton(button)
-            self.parent.cmd_buttons_layout.addWidget(button, i // 2, i % 2)
-
-        layout.addLayout(self.parent.cmd_buttons_layout, 1, 1, (len(self.parent.cmd_buttons) + len(self.parent.custom_cmd_buttons)) // 2 + 1, 2)
+            self.cmd_buttons_layout.addWidget(button, i // 2, i % 2)
 
     def set_cmd(self, cmd):
         self.parent.cmd_input.setText(cmd)
@@ -161,6 +186,7 @@ class UIRightGenerator:
     def create_placeholder_widget(self):
         placeholder = QTextEdit()
         placeholder.setReadOnly(True)
+        placeholder.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)  # Ensure it fills available space
         return placeholder
 
     def update_len_chk(self):

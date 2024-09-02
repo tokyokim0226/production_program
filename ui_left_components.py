@@ -1,9 +1,24 @@
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QTableWidget, QHeaderView, QPushButton, QWidget, QLineEdit
 from PyQt5.QtCore import Qt, pyqtSlot
 
-class UILeftComponents:
+class UILeftComponents(QWidget):
     def __init__(self, parent):
+        super().__init__(parent)
         self.parent = parent
+        self.initUI()
+
+    def initUI(self):
+        main_layout = QVBoxLayout(self)
+
+        connect_and_clearlog_widget = self.create_connect_and_clearlog_layout()
+        self.parent.log_table = self.create_log_table()
+        input_layout = self.create_input_layout()
+
+        main_layout.addWidget(connect_and_clearlog_widget)
+        main_layout.addWidget(self.parent.log_table)
+        main_layout.addWidget(input_layout)
+
+        self.setLayout(main_layout)  # Set the layout to the widget
 
     def create_connect_and_clearlog_layout(self):
         connect_and_clearlog_widget = QWidget()
@@ -12,7 +27,7 @@ class UILeftComponents:
         self.parent.connect_button = QPushButton("Connect")
         self.parent.connect_button.setMaximumWidth(100)
         self.parent.connect_button.clicked.connect(self.parent.open_connection_dialog)
-        
+
         clear_log_button = QPushButton("Clear Log")
         clear_log_button.setMaximumWidth(100)
         clear_log_button.clicked.connect(self.parent.clear_log)

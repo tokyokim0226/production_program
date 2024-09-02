@@ -1,15 +1,19 @@
-from PyQt5.QtWidgets import QMenu, QAction, QInputDialog, QMessageBox
+from PyQt5.QtWidgets import QMenu, QAction, QInputDialog, QMessageBox, QWidget
 
-class Menu:
+class UIMenu(QWidget):  # Inherit from QWidget directly
     def __init__(self, parent):
+        super().__init__(parent)
         self.parent = parent
+        self.initUI()
+
+    def initUI(self):
+        menubar = self.parent.menuBar()
+        self.parent.setMenuBar(menubar)
         self.create_menu()
 
     def create_menu(self):
-        menubar = self.parent.menuBar()
-        
         # View menu
-        view_menu = menubar.addMenu("View")
+        view_menu = self.parent.menuBar().addMenu("View")
 
         zoom_in_action = QAction("Zoom In", self.parent)
         zoom_in_action.triggered.connect(self.zoom_in)
@@ -24,7 +28,7 @@ class Menu:
         view_menu.addAction(zoom_default_action)
 
         # Command menu
-        command_menu = menubar.addMenu("Command")
+        command_menu = self.parent.menuBar().addMenu("Command")
 
         add_cmd_action = QAction("Add Command", self.parent)
         add_cmd_action.triggered.connect(self.add_custom_command)
@@ -60,7 +64,7 @@ class Menu:
                     QMessageBox.warning(self.parent, "Input Error", "CMD already exists.")
                 else:
                     self.parent.custom_cmd_buttons.append(cmd)
-                    self.parent.ui_initializer.update_cmd_buttons_layout()  # No argument needed
+                    self.parent.ui_right_generator.update_cmd_buttons_layout()  # No argument needed
             elif len(cmd) != 3:
                 QMessageBox.warning(self.parent, "Input Error", "CMD must be 3 characters long.")
         else:
@@ -81,7 +85,7 @@ class Menu:
                 if new_cmd not in self.parent.cmd_buttons + self.parent.custom_cmd_buttons:
                     index = self.parent.custom_cmd_buttons.index(cmd_to_edit)
                     self.parent.custom_cmd_buttons[index] = new_cmd
-                    self.parent.ui_initializer.update_cmd_buttons_layout()
+                    self.parent.ui_right_generator.update_cmd_buttons_layout()
                 else:
                     QMessageBox.warning(self.parent, "Error", "New command already exists or is invalid.")
             else:
@@ -97,4 +101,4 @@ class Menu:
 
         if ok and cmd_to_delete:
             self.parent.custom_cmd_buttons.remove(cmd_to_delete)
-            self.parent.ui_initializer.update_cmd_buttons_layout()
+            self.parent.ui_right_generator.update_cmd_buttons_layout()

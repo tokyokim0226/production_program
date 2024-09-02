@@ -1,53 +1,78 @@
 from PyQt5.QtWidgets import (
-    QMainWindow, QLineEdit, QTextEdit, QComboBox, QLabel, QMessageBox, QWidget
+    QMainWindow, QLineEdit, QTextEdit, QComboBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget
 )
 from PyQt5.QtCore import QTimer
 from protocol_handler import ProtocolHandler
-from ui_initializer import UIInitializer
 from connection_manager import ConnectionManager
 from communication_manager import CommunicationManager
 from logger import Logger
 from ui_left_components import UILeftComponents
 from ui_right_generator import UIRightGenerator
+from ui_right_production import UIRightProduction
+from ui_menu import UIMenu
 
 class SerialPortMon(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        # Initialize the core attributes first
         self.serial_port = None
         self.protocol_handler = ProtocolHandler(self)
         self.current_font_size = 12
 
+        # Initialize UI components early to set up dependencies
         self.cmd_input = QLineEdit(self)
         self.op_input = QLineEdit(self)
         self.id_input = QLineEdit(self)
         self.data_input = QLineEdit(self)
         self.chk_value = QLineEdit(self)
 
-        self.ui_initializer = UIInitializer(self)
-        self.ui_left_components = UILeftComponents(self)
-        self.ui_right_generator = UIRightGenerator(self)
+        # Set up the UI layout
+        self.initUI()
+
+        # Initialize the ConnectionManager and CommunicationManager
+        self.connection_manager = ConnectionManager(self)
+        self.communication_manager = CommunicationManager(self)
+
+        # Initialize the logger after log_table is set up in initUI
+        self.logger = Logger(self.log_table)
 
         self.buffer_timer = QTimer(self)
         self.buffer_timeout = 500
         self.buffer_timer.timeout.connect(self.flush_worker_buffer)
 
-        self.initUI()
-        
-        # Initialize the ConnectionManager
-        self.connection_manager = ConnectionManager(self)  # This line was missing
-        
-        self.communication_manager = CommunicationManager(self)
-        self.logger = Logger(self.log_table)
-        # self.change_font_size(12)
-
     def initUI(self):
-        self.ui_initializer.setup_ui()
+        self.setWindowTitle("SerialPortMon")
+        self.setGeometry(100, 100, 1200, 750)
+        self.setMinimumSize(600, 300)
 
-        self.cmd_input.textChanged.connect(lambda: self.ui_right_generator.update_len_chk())
-        self.op_input.textChanged.connect(lambda: self.ui_right_generator.update_len_chk())
-        self.id_input.textChanged.connect(lambda: self.ui_right_generator.update_len_chk())
-        self.data_input.textChanged.connect(lambda: self.ui_right_generator.update_len_chk())
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+
+        main_layout = QHBoxLayout(central_widget)
+
+        # Left UI components
+        self.ui_left_components = UILeftComponents(self)
+        main_layout.addWidget(self.ui_left_components, 1)
+
+        # Create a QTabWidget for the right side
+        self.tabs = QTabWidget()
+
+        # Tab 1: Original right side layout
+        self.ui_right_generator = UIRightGenerator(self)
+        tab1_widget = QWidget()
+        tab1_layout = QVBoxLayout(tab1_widget)
+        tab1_layout.addWidget(self.ui_right_generator)
+        self.tabs.addTab(tab1_widget, "Tab 1")
+
+        # Tab 2: New tab with the described layout
+        self.ui_right_production = UIRightProduction(self)
+        self.tabs.addTab(self.ui_right_production, "Tab 2")
+
+        main_layout.addWidget(self.tabs, 1)
+
+        # Menu
+        self.menu = UIMenu(self)
 
     def change_font_size(self, size):
         self.current_font_size = size
