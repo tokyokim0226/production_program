@@ -181,18 +181,22 @@ class UIRightProduction(QWidget):
             else:
                 self.original_id_status.setStyleSheet("background-color: #fbbc05; color: white;")  # Darker orange
 
-            # Step 2: Send the command to change the address
-            new_id = f"{int(self.current_id_textbox.text()):03}"
-            change_command = f"[{current_id}ADD!{new_id},"
-            checksum = self.parent.protocol_handler.calculate_checksum(change_command)
-            change_message = f"{change_command}{checksum}]"
-            self.parent.communication_manager.send_message(change_message)
-
-            # Connect to handle the response after address change
-            self.parent.communication_manager.worker.message_received.connect(self.handle_address_change_response)
+            # Step 2: Send the command to change the address after 0.2 seconds delay
+            QTimer.singleShot(200, self.send_change_command)
 
             # Disconnect this handler to avoid repeated handling
             self.parent.communication_manager.worker.message_received.disconnect(self.handle_initial_response)
+
+    def send_change_command(self):
+        new_id = f"{int(self.current_id_textbox.text()):03}"
+        current_id = self.original_id_status.text()
+        change_command = f"[{current_id}ADD!{new_id},"
+        checksum = self.parent.protocol_handler.calculate_checksum(change_command)
+        change_message = f"{change_command}{checksum}]"
+        self.parent.communication_manager.send_message(change_message)
+
+        # Connect to handle the response after address change
+        self.parent.communication_manager.worker.message_received.connect(self.handle_address_change_response)
 
     def handle_address_change_response(self, message, time_taken):
         if "ADD=" in message:
@@ -206,14 +210,14 @@ class UIRightProduction(QWidget):
             else:
                 self.converted_id_status.setStyleSheet("background-color: #ea4335; color: white;")  # Red
 
-            # Step 3: Verify the address change
-            self.address_check()
-
-            # Connect to handle the final verification
-            self.parent.communication_manager.worker.message_received.connect(self.handle_verification_response)
+            # Step 3: Verify the address change after 0.2 seconds delay
+            QTimer.singleShot(200, self.address_check)
 
             # Disconnect this handler to avoid repeated handling
             self.parent.communication_manager.worker.message_received.disconnect(self.handle_address_change_response)
+
+            # Connect to handle the final verification
+            self.parent.communication_manager.worker.message_received.connect(self.handle_verification_response)
 
     def handle_verification_response(self, message, time_taken):
         new_id = f"{int(self.current_id_textbox.text()):03}"
@@ -230,10 +234,10 @@ class UIRightProduction(QWidget):
             self.check_status.setStyleSheet("background-color: #ea4335; color: white;")  # Red
 
         # Apply lighter shade after 3 seconds
-        QTimer.singleShot(1500, self.apply_lighter_shade)
+        QTimer.singleShot(750, self.apply_lighter_shade)
 
         # Re-enable the button after the process is complete
-        QTimer.singleShot(1500, lambda: self.full_button.setEnabled(True))
+        QTimer.singleShot(750, lambda: self.full_button.setEnabled(True))
 
         # Disconnect this handler after verification
         self.parent.communication_manager.worker.message_received.disconnect(self.handle_verification_response)
