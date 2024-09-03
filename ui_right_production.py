@@ -2,14 +2,14 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
     QGroupBox, QGridLayout, QSizePolicy
 )
-
 from PyQt5.QtGui import QIntValidator
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 
 class UIRightProduction(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
+        self.current_device_id = None  # To keep track of the current device ID
         self.initUI()
 
     def initUI(self):
@@ -63,6 +63,7 @@ class UIRightProduction(QWidget):
         full_button_layout = QHBoxLayout()
         self.full_button = QPushButton("ADDRESS 바꾸기")
         self.full_button.setToolTip("Placeholder for Full 바꾸기 explanation")
+        self.full_button.clicked.connect(self.address_change_process)  # Connect to the single process function
 
         full_button_layout.addWidget(self.full_button)
         main_layout.addLayout(full_button_layout)
@@ -70,7 +71,7 @@ class UIRightProduction(QWidget):
         # Adding space between buttons and 상태 label
         main_layout.addSpacing(20)
 
-        # Status bar with three labels
+        # Status bar with three textboxes
         status_layout = QVBoxLayout()
         status_label = QLabel("상태:")
         status_layout.addWidget(status_label)
@@ -82,14 +83,12 @@ class UIRightProduction(QWidget):
         self.converted_id_label = QLabel("변환 ID")
         self.check_label = QLabel("변환 ID 체크")
 
-        self.original_id_status = QLabel()
-        self.converted_id_status = QLabel()
-        self.check_status = QLabel()
-
-        # Double the height of the grid boxes
-        self.original_id_status.setStyleSheet("background-color: gray; height: 40px")
-        self.converted_id_status.setStyleSheet("background-color: gray; height: 40px")
-        self.check_status.setStyleSheet("background-color: gray; height: 40px")
+        self.original_id_status = QLineEdit()
+        self.original_id_status.setReadOnly(True)
+        self.converted_id_status = QLineEdit()
+        self.converted_id_status.setReadOnly(True)
+        self.check_status = QLineEdit()
+        self.check_status.setReadOnly(True)
 
         status_box_layout.addWidget(self.original_id_label, 0, 0, Qt.AlignCenter)
         status_box_layout.addWidget(self.converted_id_label, 0, 1, Qt.AlignCenter)
@@ -118,6 +117,47 @@ class UIRightProduction(QWidget):
         """Send a message to check the address."""
         message = "[999ADD?,30]"
         self.parent.communication_manager.send_message(message)
+
+    def address_change_process(self):
+        """Handle the entire address change process without nested functions."""
+        self.parent.communication_manager.worker.message_received.connect(self.handle_initial_response)
+        self.address_check()
+
+    def handle_initial_response(self, message, time_taken):
+        if "ADD=" in message:
+            current_id = message[1:4]  # Extract the current device address (XXX)
+            self.original_id_status.setText(current_id)
+
+            # Step 2: Send the command to change the address after a delay
+            new_id = f"{int(self.current_id_textbox.text()):03}"
+            change_command = f"[{current_id}ADD!{new_id},"
+            checksum = self.parent.protocol_handler.calculate_checksum(change_command)
+            change_message = f"{change_command}{checksum}]"
+
+            QTimer.singleShot(1000, lambda: self.parent.communication_manager.send_message(change_message))
+            QTimer.singleShot(2000, lambda: self.verify_address_change(new_id))
+
+            # Disconnect to prevent multiple calls
+            self.parent.communication_manager.worker.message_received.disconnect(self.handle_initial_response)
+
+    def verify_address_change(self, new_id):
+        """Verify if the address was successfully changed."""
+        self.address_check()
+
+        def handle_verification(message, time_taken):
+            if f"ADD={new_id}" in message:
+                self.converted_id_status.setText(new_id)
+                self.check_status.setText("Address changed successfully")
+
+                # Increment the address for the next device
+                self.increment_id()
+            else:
+                self.check_status.setText("Address change failed")
+
+            # Disconnect after verification
+            self.parent.communication_manager.worker.message_received.disconnect(handle_verification)
+
+        self.parent.communication_manager.worker.message_received.connect(handle_verification)
 
     def decrement_id(self):
         current_text = self.current_id_textbox.text()
