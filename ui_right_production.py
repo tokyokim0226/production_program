@@ -2,7 +2,8 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
     QGroupBox, QGridLayout, QSizePolicy
 )
-from PyQt5.QtGui import QIntValidator, QFont
+
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtCore import Qt
 
 class UIRightProduction(QWidget):
@@ -14,17 +15,18 @@ class UIRightProduction(QWidget):
     def initUI(self):
         main_layout = QVBoxLayout(self)
 
-        # "마지막으로 변환한 ID" label and textbox
-        top_layout = QVBoxLayout()
-        self.last_converted_label = QLabel("마지막으로 변환한 ID")
-        self.last_converted_id_textbox = QLineEdit()
-        self.last_converted_id_textbox.setReadOnly(True)
-        self.last_converted_id_textbox.setFixedWidth(150)
-        self.last_converted_id_textbox.setText("000")
-        self.last_converted_id_textbox.setAlignment(Qt.AlignCenter)
-        top_layout.addWidget(self.last_converted_label)
-        top_layout.addWidget(self.last_converted_id_textbox)
-        main_layout.addLayout(top_layout)
+        # Replace the '마지막으로 변환한 ID' label and textbox with two buttons
+        button_layout = QHBoxLayout()
+
+        self.address_check_button = QPushButton("ADDRESS 체크하기")
+        self.address_check_button.clicked.connect(self.address_check)
+
+        self.device_reset_button = QPushButton("기기 초기화하기")
+
+        button_layout.addWidget(self.address_check_button)
+        button_layout.addWidget(self.device_reset_button)
+
+        main_layout.addLayout(button_layout)
 
         # Label and textbox for "현재 지정 ID"
         current_id_label = QLabel("현재 지정 ID")
@@ -58,12 +60,12 @@ class UIRightProduction(QWidget):
         main_layout.addLayout(current_id_layout)
 
         # "Quick 바꾸기" and "Full 바꾸기" buttons next to each other
-        button_layout = QHBoxLayout()
-        self.full_button = QPushButton("Full 바꾸기")
+        full_button_layout = QHBoxLayout()
+        self.full_button = QPushButton("ADDRESS 바꾸기")
         self.full_button.setToolTip("Placeholder for Full 바꾸기 explanation")
 
-        button_layout.addWidget(self.full_button)
-        main_layout.addLayout(button_layout)
+        full_button_layout.addWidget(self.full_button)
+        main_layout.addLayout(full_button_layout)
 
         # Adding space between buttons and 상태 label
         main_layout.addSpacing(20)
@@ -111,6 +113,11 @@ class UIRightProduction(QWidget):
         # Connect increment and decrement buttons
         self.decrement_button.clicked.connect(self.decrement_id)
         self.increment_button.clicked.connect(self.increment_id)
+
+    def address_check(self):
+        """Send a message to check the address."""
+        message = "[999ADD?,30]"
+        self.parent.communication_manager.send_message(message)
 
     def decrement_id(self):
         current_text = self.current_id_textbox.text()
