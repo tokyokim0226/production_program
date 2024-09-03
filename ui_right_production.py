@@ -27,6 +27,7 @@ class UIRightProduction(QWidget):
         self.address_check_button.clicked.connect(self.address_check_only)
 
         self.device_reset_button = QPushButton("기기 초기화하기")
+        self.device_reset_button.clicked.connect(self.factory_reset)
 
         button_layout.addWidget(self.address_check_button)
         button_layout.addWidget(self.device_reset_button)
@@ -124,6 +125,30 @@ class UIRightProduction(QWidget):
         """Send a message to check the address."""
         self.current_message = "[999ADD?,30]"
         self.parent.communication_manager.send_message(self.current_message)
+
+    def factory_reset(self):
+        # Step 1: Send the message to check the current address
+        self.current_message = "[999ADD?,30]"
+        self.parent.communication_manager.send_message(self.current_message)
+
+        # Connect the message_received signal to handle the response
+        self.parent.communication_manager.worker.message_received.connect(self.factory_reset_response)
+
+    def factory_reset_response(self, message, time_taken):
+        # Step 2: Process the received address and send the factory reset command
+        if "ADD=" in message:
+            current_id = message[1:4]  # Extract the address (XXX) from the message
+
+            # Create the factory reset command using the extracted address
+            reset_command = f"[{current_id}POW!FRESET,"
+            checksum = self.parent.protocol_handler.calculate_checksum(reset_command)
+            factory_reset_message = f"{reset_command}{checksum}]"
+
+            # Send the factory reset command
+            self.parent.communication_manager.send_message(factory_reset_message)
+
+            # Disconnect the signal to avoid it being called again unintentionally
+            self.parent.communication_manager.worker.message_received.disconnect(self.factory_reset_response)
 
     def address_change_process(self):
         if not self.parent.serial_port or not self.parent.serial_port.is_open:
