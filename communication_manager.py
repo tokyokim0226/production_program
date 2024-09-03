@@ -7,7 +7,7 @@ class CommunicationManager:
         self.parent = parent
         self.reading_thread = None
         self.worker = None
-        self.logger = Logger(self.parent.log_table)  # Use Logger with log_table
+        self.logger = Logger(self.parent.log_table)
 
     def start_reading_thread(self):
         if self.parent.serial_port and self.parent.serial_port.is_open:
@@ -19,8 +19,7 @@ class CommunicationManager:
             self.worker.message_received.connect(self.handle_received_message_with_time)
             self.worker.data_received.connect(self.reset_buffer_timer)
             self.worker.error_occurred.connect(self.parent.protocol_handler.handle_error)
-            self.worker.finished.connect(self.reading_thread.quit)
-            self.worker.finished.connect(self.worker.deleteLater)
+            self.worker.finished.connect(self.cleanup_thread)
             self.reading_thread.finished.connect(self.reading_thread.deleteLater)
 
             self.reading_thread.start()
@@ -30,7 +29,12 @@ class CommunicationManager:
             self.worker.running = False
             self.reading_thread.quit()
             self.reading_thread.wait()
+
+    def cleanup_thread(self):
+        if self.worker:
+            self.worker.deleteLater()
             self.worker = None
+        if self.reading_thread:
             self.reading_thread = None
 
     def flush_worker_buffer(self):

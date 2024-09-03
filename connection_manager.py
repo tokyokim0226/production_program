@@ -32,8 +32,6 @@ class ConnectionManager:
                     )
                     self.parent.logger.log_message("Connect", f"Connected to {port}")
                     self.parent.communication_manager.start_reading_thread()
-
-                    # Update the UI state after a successful connection
                     self.parent.connect_button.setText("Close")
 
                 except Exception as e:

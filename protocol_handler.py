@@ -51,6 +51,12 @@ class ProtocolHandler:
     def handle_error(self, error_message):
         """Handle errors by logging them in the log table."""
         self.log_error(f"Error reading from serial port: {error_message}")
+        if "disconnected unexpectedly" in error_message.lower():
+            self.parent.communication_manager.stop_reading_thread()
+            self.parent.logger.log_message("Disconnect", "Serial port disconnected unexpectedly")
+            if self.parent.serial_port and self.parent.serial_port.is_open:
+                self.parent.serial_port.close()
+            self.parent.connect_button.setText("Connect")
 
     def log_error(self, message):
         """Log an error message in the log table."""
