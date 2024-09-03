@@ -125,14 +125,6 @@ class UIRightProduction(QWidget):
         self.current_message = "[999ADD?,30]"
         self.parent.communication_manager.send_message(self.current_message)
 
-
-    def address_check(self):
-        """Send a message to check the address."""
-        self.current_step = 0  # Indicate this is an isolated check
-        self.current_message = "[999ADD?,30]"
-        self.retry_count = 0
-        self.send_message_with_retry()
-
     def address_change_process(self):
         if not self.parent.serial_port or not self.parent.serial_port.is_open:
             self.parent.logger.log_message("Error", "No serial port is connected.")
@@ -161,12 +153,6 @@ class UIRightProduction(QWidget):
         """Handle the received message based on the current step."""
         self.timer.stop()
         self.parent.communication_manager.worker.message_received.disconnect(self.handle_message_received)
-
-        if self.current_step == 0:
-            if "ADD=" in message:
-                self.original_id_status.setText(message[1:4])
-                self.original_id_status.setStyleSheet("background-color: #fbbc05; color: white;")
-            return  # Only check the address, no further steps
 
         if self.current_step == 1:
             if "ADD=" in message:
