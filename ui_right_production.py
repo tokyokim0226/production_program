@@ -28,8 +28,10 @@ class UIRightProduction(QWidget):
 
         main_layout.addLayout(button_layout)
 
+        main_layout.addSpacing(20)
+
         # Label and textbox for "현재 지정 ID"
-        current_id_label = QLabel("현재 지정 ID")
+        current_id_label = QLabel("지정 ID")
         current_id_label.setAlignment(Qt.AlignCenter)
         current_id_label.setObjectName("IDLabel")
         main_layout.addWidget(current_id_label)

@@ -10,6 +10,7 @@ class UIRightGenerator(QWidget):
         super().__init__(parent)
         self.parent = parent
         self.cmd_buttons_layout = None  # Store the layout here
+        self.op_button_group = None  # Store the OP button group
         self.initUI()
 
     def initUI(self):
@@ -27,6 +28,11 @@ class UIRightGenerator(QWidget):
         layout.addWidget(placeholder)
 
         self.setLayout(layout)
+
+        # Set default values and update the UI accordingly
+        self.parent.id_input.setText("999")
+        self.set_cmd("ADD")
+        self.set_op("?")
 
         # Connect signals to update the generated message in real-time
         self.parent.id_input.textChanged.connect(self.update_len_chk)
@@ -78,14 +84,14 @@ class UIRightGenerator(QWidget):
 
         self.update_cmd_buttons_layout()
 
-        op_button_group = QButtonGroup(self.parent)
+        self.op_button_group = QButtonGroup(self.parent)
         op_buttons = ["!", "?", "="]
         op_buttons_layout = QVBoxLayout()
         for op in op_buttons:
             button = QPushButton(op)
             button.setCheckable(True)
             button.clicked.connect(lambda checked, op=op: self.set_op(op))
-            op_button_group.addButton(button)
+            self.op_button_group.addButton(button)
             op_buttons_layout.addWidget(button)
 
         layout.addLayout(op_buttons_layout, 1, 3, len(op_buttons), 1)
@@ -121,36 +127,53 @@ class UIRightGenerator(QWidget):
             self.cmd_buttons_layout.addWidget(button, i // 2, i % 2)
 
     def set_cmd(self, cmd):
+        # Check the corresponding button visually
+        for button in self.parent.cmd_button_group.buttons():
+            if button.text() == cmd:
+                button.setChecked(True)
+                break
+
         self.parent.cmd_input.setText(cmd)
         self.update_len_chk()
 
     def set_op(self, op):
+        # Check the corresponding button visually
+        for button in self.op_button_group.buttons():
+            if button.text() == op:
+                button.setChecked(True)
+                break
+
         self.parent.op_input.setText(op)
+        if op == "?":
+            self.parent.data_input.setText("")  # Clear the DATA input
+            self.parent.data_input.setReadOnly(True)
+            self.parent.data_input.setStyleSheet("background-color: #e0e0e0;")  # Lighter grey for the DATA input
+        else:
+            self.parent.data_input.setReadOnly(False)
+            self.parent.data_input.setStyleSheet("")  # Reset the DATA input styling
         self.update_len_chk()
 
     def increment_id(self):
         current_text = self.parent.id_input.text()
-        if current_text == "999":
-            self.parent.id_input.setText("000")
+        if current_text.isdigit():
+            current_value = int(current_text)
+            if current_value < 999:
+                self.parent.id_input.setText(str(current_value + 1))
+            else:
+                self.parent.id_input.setText("0")
         else:
-            try:
-                current_value = int(current_text)
-                if current_value < 999:
-                    self.parent.id_input.setText(f"{current_value + 1:03}")
-            except ValueError:
-                self.parent.id_input.setText("001")
+            self.parent.id_input.setText("1")
 
     def decrement_id(self):
         current_text = self.parent.id_input.text()
-        if current_text == "000":
-            self.parent.id_input.setText("999")
+        if current_text.isdigit():
+            current_value = int(current_text)
+            if current_value > 0:
+                self.parent.id_input.setText(str(current_value - 1))
+            else:
+                self.parent.id_input.setText("999")
         else:
-            try:
-                current_value = int(current_text)
-                if current_value > 0:
-                    self.parent.id_input.setText(f"{current_value - 1:03}")
-            except ValueError:
-                self.parent.id_input.setText("000")
+            self.parent.id_input.setText("999")
 
     def create_len_chk_layout(self):
         len_chk_layout = QHBoxLayout()
@@ -195,10 +218,19 @@ class UIRightGenerator(QWidget):
         op_value = self.parent.op_input.text()
         data_value = self.parent.data_input.text()
 
+        # Format the ID as a 3-digit number for the message
+        if id_value.isdigit():
+            id_value = f"{int(id_value):03}"
+
         stx = self.parent.protocol_handler.STX
         etx = self.parent.protocol_handler.ETX
 
-        stx_and_content = f"{stx}{id_value}{cmd_value}{op_value}{data_value},"
+        # Adjust the content based on whether the "?" operator is selected
+        if op_value == "?":
+            stx_and_content = f"{stx}{id_value}{cmd_value}{op_value},"
+        else:
+            stx_and_content = f"{stx}{id_value}{cmd_value}{op_value}{data_value},"
+
         chk_value = self.parent.protocol_handler.calculate_checksum(stx_and_content)
 
         self.parent.chk_value.setText(chk_value)
