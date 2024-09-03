@@ -130,7 +130,14 @@ class UIRightProduction(QWidget):
         self.parent.communication_manager.send_message(message)
 
     def address_change_process(self):
+        if not self.parent.serial_port or not self.parent.serial_port.is_open:
+            self.parent.logger.log_message("Error", "No serial port is connected.")
+            return
+        
         """Handle the entire address change process based on receiving messages."""
+        # Disable the button to prevent multiple clicks
+        self.full_button.setEnabled(False)
+
         # Clear status boxes and reset color
         self.clear_status_boxes()
 
@@ -223,7 +230,10 @@ class UIRightProduction(QWidget):
             self.check_status.setStyleSheet("background-color: #ea4335; color: white;")  # Red
 
         # Apply lighter shade after 3 seconds
-        QTimer.singleShot(3000, self.apply_lighter_shade)
+        QTimer.singleShot(1500, self.apply_lighter_shade)
+
+        # Re-enable the button after the process is complete
+        QTimer.singleShot(1500, lambda: self.full_button.setEnabled(True))
 
         # Disconnect this handler after verification
         self.parent.communication_manager.worker.message_received.disconnect(self.handle_verification_response)

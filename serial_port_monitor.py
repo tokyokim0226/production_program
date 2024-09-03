@@ -62,11 +62,11 @@ class SerialPortMon(QMainWindow):
         tab1_widget = QWidget()
         tab1_layout = QVBoxLayout(tab1_widget)
         tab1_layout.addWidget(self.ui_right_generator)
-        self.tabs.addTab(tab1_widget, "Tab 1")
+        self.tabs.addTab(tab1_widget, "1 - 메시지 자동 생성")
 
         # Tab 2: New tab with the described layout
         self.ui_right_production = UIRightProduction(self)
-        self.tabs.addTab(self.ui_right_production, "Tab 2")
+        self.tabs.addTab(self.ui_right_production, "2 - ADD 자동 할당")
 
         main_layout.addWidget(self.tabs, 1)
 

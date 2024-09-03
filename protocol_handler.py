@@ -1,3 +1,5 @@
+from PyQt5.QtWidgets import QTableWidgetItem
+
 class ProtocolHandler:
     STX = '['
     ETX = ']'
@@ -47,5 +49,15 @@ class ProtocolHandler:
                 self.parent.text_display.append(f"Invalid message received: {message.strip()}")
 
     def handle_error(self, error_message):
-        if self.parent:
-            self.parent.text_display.append(f"Error reading from serial port: {error_message}")
+        """Handle errors by logging them in the log table."""
+        self.log_error(f"Error reading from serial port: {error_message}")
+
+    def log_error(self, message):
+        """Log an error message in the log table."""
+        log_table = self.parent.log_table
+
+        row_count = log_table.rowCount()
+        log_table.insertRow(row_count)
+        log_table.setItem(row_count, 0, QTableWidgetItem("Error"))
+        log_table.setItem(row_count, 1, QTableWidgetItem(message))
+        log_table.setItem(row_count, 2, QTableWidgetItem("0 ms"))  # You might want to calculate the actual time taken
