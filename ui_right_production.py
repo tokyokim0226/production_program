@@ -169,13 +169,31 @@ class UIRightProduction(QWidget):
 
     def send_message_with_retry(self):
         """Send the current message with retry mechanism."""
+        # Check if the connection is valid and worker exists
+        if not self.parent.serial_port or not self.parent.serial_port.is_open:
+            self.abort_process("No serial port is connected.")
+            return
+
+        if not self.parent.communication_manager.worker:
+            self.abort_process("Communication worker is not initialized.")
+            return
+
+        # Retry mechanism
         if self.retry_count < self.max_retries:
             self.retry_count += 1
             self.parent.communication_manager.send_message(self.current_message)
+
+            # Ensure the timer starts only when a message is sent
             self.timer.start(self.timeout_duration)
-            self.parent.communication_manager.worker.message_received.connect(self.handle_message_received)
+
+            # Connect the signal to handle the message, but make sure worker exists
+            try:
+                self.parent.communication_manager.worker.message_received.connect(self.handle_message_received)
+            except AttributeError:
+                self.abort_process("Failed to connect to communication worker. Process aborted.")
         else:
             self.abort_process("No response received after 3 attempts. Process aborted.")
+
 
     def handle_message_received(self, message, time_taken):
         """Handle the received message based on the current step."""
@@ -242,11 +260,24 @@ class UIRightProduction(QWidget):
     def abort_process(self, error_message):
         """Abort the current process, log the error, and update the UI."""
         self.timer.stop()
-        self.parent.communication_manager.worker.message_received.disconnect(self.handle_message_received)
+
+        # Safely disconnect signals
+        try:
+            if self.parent.communication_manager.worker:
+                self.parent.communication_manager.worker.message_received.disconnect(self.handle_message_received)
+        except (TypeError, AttributeError):
+            pass  # Ignore errors if worker is already None or not connected
+
+        # Re-enable the ADD 바꾸기 button after the abort
         self.full_button.setEnabled(True)
+
+        # Log the error message
         self.parent.logger.log_message("Error", error_message)
+
+        # Update UI to indicate failure
         self.check_status.setText("FAILED")
         self.check_status.setStyleSheet("background-color: #ea4335; color: white;")
+
 
     def reset_after_success(self):
         """Reset the process after successful completion."""
