@@ -21,6 +21,11 @@ QLabel#IDLabel {
     font-weight: bold;
 }
 
+QLineEdit#generated_message {
+    font-size: 30px; /* Large font size for the ID input box */
+    font-weight: bold;
+}
+
 QPushButton#IDButton {
     font-size: 30px; /* Large font size for the increment/decrement buttons */
     font-weight: bold;
@@ -237,4 +242,22 @@ QTableCornerButton::section {
     border-color: #5dade2;
     border-radius: 3px; /* Rounded corners */
     margin: 2px; /* Ensure it looks consistent */
+}
+
+QTabBar::tab {
+    background-color: #1e3a5f; /* Darker blue for tab background */
+    border: 1px solid #3b6ea5; /* Slightly lighter border color */
+    padding: 5px 10px; /* Increase padding */
+    font-size: 15px; /* Increase font size */
+    font-weight: bold; /* Make the font bold */
+    color: #ffffff; /* White text for the tabs */
+}
+
+QTabBar::tab:selected {
+    background-color: #254878; /* Even darker blue for selected tab */
+    color: #ffffff; /* White text for the selected tab */
+}
+
+QTabBar::tab:hover {
+    background-color: #3b6ea5; /* Lighter blue on hover */
 }

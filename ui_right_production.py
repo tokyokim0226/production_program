@@ -53,7 +53,7 @@ class UIRightProduction(QWidget):
         self.current_id_textbox = QLineEdit()
         self.current_id_textbox.setMaxLength(3)
         self.current_id_textbox.setAlignment(Qt.AlignCenter)
-        self.current_id_textbox.setValidator(QIntValidator(1, 998, self))
+        self.current_id_textbox.setValidator(QIntValidator(0, 998, self))
         self.current_id_textbox.setFixedHeight(50)
         self.current_id_textbox.setObjectName("IDTextBox")
         self.current_id_textbox.setText("1")
@@ -127,6 +127,9 @@ class UIRightProduction(QWidget):
         self.parent.communication_manager.send_message(self.current_message)
 
     def factory_reset(self):
+        if not self.parent.serial_port or not self.parent.serial_port.is_open:
+            self.parent.logger.log_message("Error", "No serial port is connected.")
+            return
         # Step 1: Send the message to check the current address
         self.current_message = "[999ADD?,30]"
         self.parent.communication_manager.send_message(self.current_message)
@@ -305,3 +308,4 @@ class UIRightProduction(QWidget):
             current_value = int(current_text)
             if current_value < 998:
                 self.current_id_textbox.setText(str(current_value + 1))
+

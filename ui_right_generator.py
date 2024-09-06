@@ -195,6 +195,7 @@ class UIRightGenerator(QWidget):
         message_display_layout = QHBoxLayout()
 
         self.parent.message_display = QLineEdit()
+        self.parent.message_display.setObjectName("generated_message")
         self.parent.message_display.setReadOnly(True)
         self.parent.message_display.setAlignment(Qt.AlignCenter)
 
