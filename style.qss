@@ -244,20 +244,27 @@ QTableCornerButton::section {
     margin: 2px; /* Ensure it looks consistent */
 }
 
+/* Unselected Tabs */
 QTabBar::tab {
-    background-color: #1e3a5f; /* Darker blue for tab background */
-    border: 1px solid #3b6ea5; /* Slightly lighter border color */
-    padding: 5px 10px; /* Increase padding */
-    font-size: 15px; /* Increase font size */
+    background-color: #e0effc; /* Same lighter blue as unselected buttons */
+    border: 1px solid #b2d4f7; /* Same border as unselected buttons */
+    padding: 8px 12px; /* Same padding as buttons */
+    font-size: 18px; /* Increase font size */
     font-weight: bold; /* Make the font bold */
-    color: #ffffff; /* White text for the tabs */
+    color: #2c3e50; /* Darker text for unselected tabs (same as button text) */
+    min-width: 200px;  /* Ensure the tab is wide enough to fit the text */
+    min-height: 30px; /* Make sure tabs have enough height */
 }
 
+/* Selected Tab */
 QTabBar::tab:selected {
-    background-color: #254878; /* Even darker blue for selected tab */
-    color: #ffffff; /* White text for the selected tab */
+    background-color: #347adb; /* Same blue as selected buttons */
+    border: 1px solid #2980b9; /* Same border as selected buttons */
+    color: #ffffff; /* White text for the selected tab (same as buttons) */
 }
 
+/* Hover Effect */
 QTabBar::tab:hover {
-    background-color: #3b6ea5; /* Lighter blue on hover */
+    background-color: #97baf7; /* Same hover effect as buttons */
+    border-color: #97c7f3; /* Same border hover effect */
 }
