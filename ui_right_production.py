@@ -114,13 +114,13 @@ class UIRightProduction(QWidget):
 
         main_layout.addLayout(status_layout)
 
-        self.placeholder_textbox = QLineEdit()
-        self.placeholder_textbox.setReadOnly(True)
-        self.placeholder_textbox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        main_layout.addWidget(self.placeholder_textbox)
+        # Add stretch here to push everything upwards without using a placeholder
+        main_layout.addStretch()
 
         self.decrement_button.clicked.connect(self.decrement_id)
         self.increment_button.clicked.connect(self.increment_id)
+
+        self.setLayout(main_layout)  # Set the main layout for the widget
 
     def address_check_only(self):
         """Send a message to check the address."""
@@ -340,4 +340,3 @@ class UIRightProduction(QWidget):
             current_value = int(current_text)
             if current_value < 998:
                 self.current_id_textbox.setText(str(current_value + 1))
-
