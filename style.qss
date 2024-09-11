@@ -16,6 +16,11 @@ QLineEdit#IDTextBox {
     font-weight: bold;
 }
 
+QLabel#status {
+    font-size: 30px; /* Large font size for the ID input box */
+    font-weight: bold;
+}
+
 QLabel#IDLabel {
     font-size: 40px; /* Large font size for the ID input box */
     font-weight: bold;
@@ -248,6 +253,7 @@ QTableCornerButton::section {
 QTabBar::tab {
     background-color: #e0effc; /* Same lighter blue as unselected buttons */
     border: 1px solid #b2d4f7; /* Same border as unselected buttons */
+
     padding: 8px 12px; /* Same padding as buttons */
     font-size: 18px; /* Increase font size */
     font-weight: bold; /* Make the font bold */

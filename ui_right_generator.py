@@ -40,6 +40,28 @@ class UIRightGenerator(QWidget):
         self.parent.cmd_input.textChanged.connect(self.update_len_chk)
         self.parent.op_input.textChanged.connect(self.update_len_chk)
 
+        # Connect the DATA input field to the new limitation and upper-case handler
+        self.parent.data_input.textChanged.connect(self.limit_and_convert_data)
+
+    def limit_and_convert_data(self):
+        # Get the current input text
+        current_text = self.parent.data_input.text()
+        
+        # Limit the text to 6 characters and convert to uppercase
+        limited_text = current_text[:6].upper()
+        
+        # Block signals temporarily to avoid recursive textChanged triggering
+        self.parent.data_input.blockSignals(True)
+        
+        # Update the DATA input field with the modified text
+        self.parent.data_input.setText(limited_text)
+        
+        # Re-enable signals
+        self.parent.data_input.blockSignals(False)
+
+        # Update length and checksum after modifying the input
+        self.update_len_chk()
+
     def create_manual_input_layout(self):
         layout = QGridLayout()
 

@@ -77,6 +77,7 @@ class UIRightProduction(QWidget):
 
         status_layout = QHBoxLayout()
         status_label = QLabel("상태:")
+        status_label.setObjectName("status")
         status_layout.addWidget(status_label)
 
         status_layout.addSpacing(20)
