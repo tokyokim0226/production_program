@@ -1,3 +1,5 @@
+#ui_right_generator.py
+
 from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QLabel, QPushButton, 
     QButtonGroup, QLineEdit, QWidget, QTextEdit, 
@@ -63,6 +65,13 @@ class UIRightGenerator(QWidget):
         self.update_len_chk()
 
     def create_manual_input_layout(self):
+        # Initialize UI components early to set up dependencies
+        self.parent.cmd_input = QLineEdit(self.parent)
+        self.parent.op_input = QLineEdit(self.parent)
+        self.parent.id_input = QLineEdit(self.parent)
+        self.parent.data_input = QLineEdit(self.parent)
+        self.parent.chk_value = QLineEdit(self.parent)
+
         layout = QGridLayout()
 
         id_label = QLabel("ID")

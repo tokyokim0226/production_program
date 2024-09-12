@@ -8,7 +8,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('style.qss', '.')],
+    datas=[('style.qss', '.'), ('tmee_icon.ico', '.')],  # Ensure style.qss is included
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -37,7 +37,9 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='tmee_icon.ico'  # Set the icon here
 )
+
 coll = COLLECT(
     exe,
     a.binaries,

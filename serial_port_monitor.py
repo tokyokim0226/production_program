@@ -1,6 +1,9 @@
+#serial_port_monitor.py
 from PyQt5.QtWidgets import (
     QMainWindow, QLineEdit, QTextEdit, QComboBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidget, QPushButton
 )
+from PyQt5.QtGui import QIcon
+
 from PyQt5.QtCore import QTimer
 from protocol_handler import ProtocolHandler
 from connection_manager import ConnectionManager
@@ -18,13 +21,6 @@ class SerialPortMon(QMainWindow):
         # Initialize the core attributes first
         self.serial_port = None
         self.protocol_handler = ProtocolHandler(self)
-
-        # Initialize UI components early to set up dependencies
-        self.cmd_input = QLineEdit(self)
-        self.op_input = QLineEdit(self)
-        self.id_input = QLineEdit(self)
-        self.data_input = QLineEdit(self)
-        self.chk_value = QLineEdit(self)
 
         # Set up the UI layout
         self.initUI()
@@ -44,6 +40,9 @@ class SerialPortMon(QMainWindow):
         self.setWindowTitle("SerialPortMon")
         self.setGeometry(100, 100, 1200, 750)
         self.setMinimumSize(600, 300)
+
+        # Set application icon (path should point to your icon file)
+        self.setWindowIcon(QIcon('tmee_icon.ico'))
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -92,9 +91,3 @@ class SerialPortMon(QMainWindow):
     def flush_worker_buffer(self):
         """Flush the buffer in the worker and print its content if no ETX character is found within the timeout."""
         self.communication_manager.flush_worker_buffer()
-
-    def closeEvent(self, event):
-        self.communication_manager.stop_reading_thread()
-        if self.serial_port and self.serial_port.is_open:
-            self.serial_port.close()
-        event.accept()

@@ -1,3 +1,4 @@
+#communication_manager.py
 from PyQt5.QtCore import QThread, QDateTime
 from serial_reader_worker import SerialReaderWorker
 from logger import Logger
