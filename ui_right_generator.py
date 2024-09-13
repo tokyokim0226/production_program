@@ -1,5 +1,3 @@
-#ui_right_generator.py
-
 from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QLabel, QPushButton, 
     QButtonGroup, QLineEdit, QWidget, QTextEdit, 
@@ -11,13 +9,15 @@ class UIRightGenerator(QWidget):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-        self.cmd_buttons_layout = None  # Store the layout here
-        self.op_button_group = None  # Store the OP button group
+        self.cmd_buttons_layout = None  # 명령어 버튼 레이아웃 저장
+        self.op_button_group = None  # OP 버튼 그룹 저장
         self.initUI()
 
+    # UI 초기화 메서드
     def initUI(self):
         layout = QVBoxLayout(self)
 
+        # 각 레이아웃을 생성하여 추가
         id_layout = self.create_manual_input_layout()
         len_chk_layout = self.create_len_chk_layout()
         message_display_layout = self.create_message_display_layout()
@@ -31,41 +31,35 @@ class UIRightGenerator(QWidget):
 
         self.setLayout(layout)
 
-        # Set default values and update the UI accordingly
+        # 기본값 설정 및 UI 업데이트
         self.parent.id_input.setText("999")
         self.set_cmd("ADD")
         self.set_op("?")
 
-        # Connect signals to update the generated message in real-time
+        # 실시간으로 생성된 메시지를 업데이트하는 신호 연결
         self.parent.id_input.textChanged.connect(self.update_len_chk)
         self.parent.data_input.textChanged.connect(self.update_len_chk)
         self.parent.cmd_input.textChanged.connect(self.update_len_chk)
         self.parent.op_input.textChanged.connect(self.update_len_chk)
 
-        # Connect the DATA input field to the new limitation and upper-case handler
+        # 데이터 입력 필드를 6자 제한 및 대문자로 변경하는 핸들러 연결
         self.parent.data_input.textChanged.connect(self.limit_and_convert_data)
 
+    # 데이터 입력 필드에 대해 입력 제한 및 대문자 변환
     def limit_and_convert_data(self):
-        # Get the current input text
         current_text = self.parent.data_input.text()
-        
-        # Limit the text to 6 characters and convert to uppercase
         limited_text = current_text[:6].upper()
-        
-        # Block signals temporarily to avoid recursive textChanged triggering
+
+        # 신호 차단 후 입력 필드 업데이트 및 다시 신호 연결
         self.parent.data_input.blockSignals(True)
-        
-        # Update the DATA input field with the modified text
         self.parent.data_input.setText(limited_text)
-        
-        # Re-enable signals
         self.parent.data_input.blockSignals(False)
 
-        # Update length and checksum after modifying the input
+        # 길이 및 체크섬 업데이트
         self.update_len_chk()
 
+    # 수동 입력 레이아웃 생성
     def create_manual_input_layout(self):
-        # Initialize UI components early to set up dependencies
         self.parent.cmd_input = QLineEdit(self.parent)
         self.parent.op_input = QLineEdit(self.parent)
         self.parent.id_input = QLineEdit(self.parent)
@@ -88,6 +82,7 @@ class UIRightGenerator(QWidget):
         layout.addWidget(op_label, 0, 3, 1, 1)
         layout.addWidget(data_label, 0, 4, 1, 1)
 
+        # ID 입력 필드 및 증감 버튼
         id_input_layout = QHBoxLayout()
         self.parent.id_input = QLineEdit()
         self.parent.id_input.setAlignment(Qt.AlignCenter)
@@ -108,13 +103,15 @@ class UIRightGenerator(QWidget):
 
         layout.addLayout(id_input_layout, 1, 0, 1, 1)
 
+        # 명령어 버튼 그룹 생성 및 업데이트
         self.parent.cmd_button_group = QButtonGroup(self.parent)
         self.parent.cmd_buttons = ["ADD", "COL", "POW", "MIN", "MAX", "DBG", "INF", "D_C", "DET", "SEA", "MGS"]
         self.parent.custom_cmd_buttons = []
-        self.cmd_buttons_layout = QGridLayout()  # Store the layout here
+        self.cmd_buttons_layout = QGridLayout()  # 명령어 버튼 레이아웃 저장
 
         self.update_cmd_buttons_layout()
 
+        # OP 버튼 그룹 생성
         self.op_button_group = QButtonGroup(self.parent)
         op_buttons = ["!", "?", "="]
         op_buttons_layout = QVBoxLayout()
@@ -127,6 +124,7 @@ class UIRightGenerator(QWidget):
 
         layout.addLayout(op_buttons_layout, 1, 3, len(op_buttons), 1)
 
+        # 데이터 입력 필드 추가
         self.parent.data_input = QLineEdit()
         self.parent.data_input.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.parent.data_input, 1, 4, 1, 1)
@@ -135,14 +133,16 @@ class UIRightGenerator(QWidget):
 
         return layout
 
+    # 명령어 버튼 레이아웃 업데이트
     def update_cmd_buttons_layout(self):
-        # Ensure the stored layout is used
+        # 기존 버튼 제거
         for i in reversed(range(self.cmd_buttons_layout.count())):
             widget = self.cmd_buttons_layout.itemAt(i).widget()
             if widget:
                 self.cmd_buttons_layout.removeWidget(widget)
                 widget.setParent(None)
 
+        # 기본 명령어 버튼 추가
         for i, cmd in enumerate(self.parent.cmd_buttons):
             button = QPushButton(cmd)
             button.setCheckable(True)
@@ -150,6 +150,7 @@ class UIRightGenerator(QWidget):
             self.parent.cmd_button_group.addButton(button)
             self.cmd_buttons_layout.addWidget(button, i // 2, i % 2)
 
+        # 사용자 정의 명령어 버튼 추가
         for i, cmd in enumerate(self.parent.custom_cmd_buttons, len(self.parent.cmd_buttons)):
             button = QPushButton(cmd)
             button.setCheckable(True)
@@ -157,8 +158,8 @@ class UIRightGenerator(QWidget):
             self.parent.cmd_button_group.addButton(button)
             self.cmd_buttons_layout.addWidget(button, i // 2, i % 2)
 
+    # CMD 버튼 선택
     def set_cmd(self, cmd):
-        # Check the corresponding button visually
         for button in self.parent.cmd_button_group.buttons():
             if button.text() == cmd:
                 button.setChecked(True)
@@ -167,8 +168,8 @@ class UIRightGenerator(QWidget):
         self.parent.cmd_input.setText(cmd)
         self.update_len_chk()
 
+    # OP 버튼 선택
     def set_op(self, op):
-        # Check the corresponding button visually
         for button in self.op_button_group.buttons():
             if button.text() == op:
                 button.setChecked(True)
@@ -176,14 +177,15 @@ class UIRightGenerator(QWidget):
 
         self.parent.op_input.setText(op)
         if op == "?":
-            self.parent.data_input.setText("")  # Clear the DATA input
+            self.parent.data_input.setText("")  # 데이터 입력 필드 초기화
             self.parent.data_input.setReadOnly(True)
-            self.parent.data_input.setStyleSheet("background-color: #e0e0e0;")  # Lighter grey for the DATA input
+            self.parent.data_input.setStyleSheet("background-color: #e0e0e0;")  # 데이터 입력 필드를 회색으로 설정
         else:
             self.parent.data_input.setReadOnly(False)
-            self.parent.data_input.setStyleSheet("")  # Reset the DATA input styling
+            self.parent.data_input.setStyleSheet("")  # 데이터 입력 필드 스타일 재설정
         self.update_len_chk()
 
+    # ID 값 증가
     def increment_id(self):
         current_text = self.parent.id_input.text()
         if current_text.isdigit():
@@ -195,6 +197,7 @@ class UIRightGenerator(QWidget):
         else:
             self.parent.id_input.setText("1")
 
+    # ID 값 감소
     def decrement_id(self):
         current_text = self.parent.id_input.text()
         if current_text.isdigit():
@@ -206,6 +209,7 @@ class UIRightGenerator(QWidget):
         else:
             self.parent.id_input.setText("999")
 
+    # 체크섬 및 길이 레이아웃 생성
     def create_len_chk_layout(self):
         len_chk_layout = QHBoxLayout()
 
@@ -222,6 +226,7 @@ class UIRightGenerator(QWidget):
 
         return len_chk_layout
 
+    # 메시지 표시 및 전송 레이아웃 생성
     def create_message_display_layout(self):
         message_display_layout = QHBoxLayout()
 
@@ -238,26 +243,28 @@ class UIRightGenerator(QWidget):
 
         return message_display_layout
 
+    # 빈 공간을 채우는 플레이스홀더 위젯 생성
     def create_placeholder_widget(self):
         placeholder = QTextEdit()
         placeholder.setReadOnly(True)
-        placeholder.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)  # Ensure it fills available space
+        placeholder.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         return placeholder
 
+    # 길이 및 체크섬 업데이트
     def update_len_chk(self):
         id_value = self.parent.id_input.text()
         cmd_value = self.parent.cmd_input.text()
         op_value = self.parent.op_input.text()
         data_value = self.parent.data_input.text()
 
-        # Format the ID as a 3-digit number for the message
+        # ID를 3자리 숫자로 포맷
         if id_value.isdigit():
             id_value = f"{int(id_value):03}"
 
         stx = self.parent.protocol_handler.STX
         etx = self.parent.protocol_handler.ETX
 
-        # Adjust the content based on whether the "?" operator is selected
+        # OP에 따라 메시지 내용 조정
         if op_value == "?":
             stx_and_content = f"{stx}{id_value}{cmd_value}{op_value},"
         else:
