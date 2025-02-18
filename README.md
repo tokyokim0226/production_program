@@ -1,73 +1,69 @@
-# Production Program
+# Production Program (Demo)
 
-This repository contains part of a larger production program written in Python to automate sensor configuration and integration with custom PCBs. It uses PyQt for a graphical user interface (GUI) and communicates via serial connections to streamline sensor setup at a hardware level.
 
 ---
 
 ## Overview
 
-This application automates the process of configuring sensors by interacting with custom PCBs through serial communication. By automating routine tasks (like setting parameters and reading sensor data), it helps reduce errors and speeds up production workflows.
+This repository demonstrates a Python-based production tool that configures and tests custom PCBs equipped with an embedded C program using a custom protocol. The PCBs are placed into a custom-ordered jig, and this Python application automates their setup and configuration via serial communication. It leverages PyQt5 for the graphical interface and the `pyserial` library for managing COM port connections. Python software and protocol design have been fully created by the author.
+
+**Key Highlights**  
+- **Automated Configuration**: Communicates with the embedded firmware on our custom PCB to set IDs, run checks, and more.  
+- **PyQt5 GUI**: Simple, intuitive user-friendly interface
+- **Custom PCB + Jig**: A C program is embedded into each PCB unit. The PCB can easily be connected to the jig, which is connected to the PC to manage the software program for communication
+- **Serial Communication**: `pyserial` is used to send/receive data commands to the PCB.
+
+![Program Screenshot](program_startup.png)
+
+> **Note**  
+> This repository is mainly a **showcase** of the code structure and partial functionality, mainly aimed to showcase some of the coding done by the author at a previous internship. It is not set up as a fully packaged solution for external users. Permission has been granted to share this portion of the code as the author was responsible from start to end for the entire codebase uploaded here. Further heavy contributions were made towards PCB design and lower-level programming (C) for the project, which are not shared for security purposes.
 
 ---
 
-## Features
+## Dependencies
 
-- **Serial Communication**: Establishes and manages connections to sensors via custom PCB hardware.
-- **Automated Setup**: Reads and writes sensor settings with minimal user intervention.
-- **PyQt GUI**: Provides a clear, user-friendly interface to control and monitor sensor status.
-- **Modular Design**: Enables easy updates or extensions to handle additional sensor types and communication protocols.
+- **PyQt5**  
+  - `pip install PyQt5`
+  - Renders the GUI elements (buttons, text fields, logs).
+- **pyserial**  
+  - `pip install pyserial`
+  - Facilitates communication over COM ports (USB-to-serial).
 
 ---
 
 ## File Descriptions
 
-| **File**              | **Purpose**                                                                                                                                   |
-|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| **main.py**           | Entry point of the program. Initializes the PyQt interface and manages the main workflow for sensor configuration.                            |
-| **gui_layout.py**     | Defines the PyQt-based layout and widgets, separating user interface elements from the rest of the logic.                                     |
-| **serial_comm.py**    | Handles all serial communication tasks, including opening ports, sending commands, and reading data from the sensors through the custom PCB. |
-| **config_manager.py** | Contains functions to load, validate, and update sensor parameters. Helps keep configuration logic organized.                                 |
-| **logger.py**         | Offers a simple logging mechanism for debugging and tracing sensor communication or user actions.                                             |
-| **utilities.py**      | Provides shared helper functions (e.g., data parsing, formatting) to avoid code duplication.                                                  |
-| **requirements.txt**  | Lists Python dependencies (including PyQt) needed to run the application.                                                                     |
-| **README.md**         | This documentation file.                                                                                                                      |
+| **File**                          | **Description**                                                                                                                           |
+|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| **main.py**                      | Launches the PyQt5 application, applies a custom style sheet, and displays the main window.                                               |
+| **serial_port_monitor.py**       | Main window class that sets up the GUI layout (tabs, logs) and manages top-level user actions.                                            |
+| **protocol_handler.py**          | Checks and formats messages (adds STX/ETX markers, calculates checksums) before send or after receive.                                    |
+| **serial_reader_worker.py**      | Runs in a separate thread to continuously read incoming data from the serial port without blocking the GUI.                              |
+| **communication_manager.py**     | Orchestrates the sending of messages and organizes the background thread to read data from the serial port.                              |
+| **connection_manager.py**        | Handles opening/closing of serial port connections and calls up a dialog for serial settings if needed.                                  |
+| **connection_settings_dialog.py**| A PyQt-based dialog to select COM ports, baud rate, parity, etc., then open the port for communication.                                  |
+| **logger.py**                    | Provides a basic logging utility that inserts rows into the GUI’s log table (type, message, time).                                       |
+| **ui_left_components.py**        | Defines the left-hand section of the main window (connect button, log table, manual command input).                                      |
+| **ui_right_generator.py**        | UI for automatically generating commands (CMD, OP, ID, DATA fields). Allows partial customization of commands.                           |
+| **ui_right_production.py**       | Automates the “address” assignment workflow (querying, setting, verifying) and logs success/failure states.                              |
+| **ui_menu.py**                   | Menu bar functionality for adding, editing, or removing custom commands.                                                                  |
+| **style.qss**                    | A style sheet for customizing the look and feel of the PyQt widgets (colors, fonts, spacing).                                            |
 
 ---
 
-## Installation
+## Usage (Simplified Demo)
 
-1. **Clone the Repository**  
+1. **Insert PCB**  
+   Connect Jig ports using cables for serial connection with PC. Place target PCB to configure into the jig.
+2. **Run the App** - For those who simply want to view the app, simply run the following code after having installed the dependencies
    ```bash
-   git clone https://github.com/tokyokim0226/production_program.git
-   cd production_program
-Install Dependencies
-Make sure Python 3.x is installed, then run:
-bash
-Copy
-Edit
-pip install -r requirements.txt
-Connect Hardware
-Attach your sensors to the custom PCB.
-Connect the PCB to your computer via an available COM port or USB-to-serial adapter.
-Usage
-Launch the Application
-
-bash
-Copy
-Edit
-python main.py
-The PyQt GUI will open, showing fields for sensor parameters.
-
-Select COM Port
-In the GUI, choose the correct port (especially important if multiple ports exist).
-
-Adjust Sensor Settings
-Enter parameters such as baud rate, calibration data, or other sensor-specific options.
-
-## Author
-- Full GitHub Code: The entire Python code in this repository was solely developed by the author.
-### Additional Tasks:
-- Contributed to basic PCB design and lower-level firmware coding.
-- Ensured all hardware components worked together for an automated production workflow.
-- Coordinated system integration to validate the final solution on real machines.
-
+   python main.py
+   ```
+   The PyQt GUI will appear, displaying a log panel, connect button, and tabs.
+   
+   The entire program has been exported into a .exe file separately for ease of use at the company.
+4. **Basic Interaction**
+   - Select the correct COM port with the Connect button, using settings (such as baud rate, parity bit) of your choice
+   - Adjust the address, send/receive messages, or reset the PCB with a few clicks.
+   - Automation process is on tab 2, easily configuring our custom made PCBs for the initial setup
+   - Commands maybe added/deleted/edited as necessary, on top of the basic commands used
